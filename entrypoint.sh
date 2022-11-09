@@ -5,4 +5,4 @@ set -e
 
 result="result"
 
-echo "::set-output name=output_stuff::$result"
+echo "output_stuff=$result" >> $GITHUB_OUTPUT
