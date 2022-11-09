@@ -9,5 +9,5 @@ inputs:
       Defaults to `latest`.
     required: false
 runs:
-  using: 'node19'
+  using: 'node16'
   main: 'index.js'
