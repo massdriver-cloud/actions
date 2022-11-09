@@ -1,14 +1,13 @@
-name: 'Massdriver Github Action'
-description: 'Create a Preview Environment'
+name: 'Setup Massdriver'
+description: 'Sets up the Massdriver CLI in your GitHub Actions workflow.'
+author: 'Massdriver, Inc.'
 inputs:
-  config:
-    description: 'The path to a .json config file containing environment variables for all manifests in the environment. Example: "../../preview.json"'
-    required: true
-outputs:
-  output_stuff:
-    description: "What else do we want in here?"
+  version:
+    description: |
+      The version of the Massdriver CLI to install.
+      A value of `latest` will install the latest version of the CLI.
+      Defaults to `latest`.
+    required: false
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - ${{ inputs.config }}
+  using: 'node19'
+  main: 'index.js'
