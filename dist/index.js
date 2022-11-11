@@ -1,6 +1,46 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 2932:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(2186);
+const tc = __nccwpck_require__(7784)
+
+async function run() {
+  try {
+    const version = core.getInput('version');
+    core.info(`Downloading version ${version} of the Massdriver CLI!`);
+
+    await setup(version);
+
+    // in future, set any ouputs here, like
+    // core.setOutput('output_name', output_value);
+  } catch (error) {
+    core.setFailed(error.message);
+  }
+}
+
+async function setup(version) {
+    // Example of how to throw an error that gets spat out by GHA:
+    //if (x !== y) {
+    //  throw new Error('glarblblargblarggabagook');
+    //}
+    downloadUrl = "https://github.com/massdriver-cloud/massdriver-cli/releases/download/v0.4.8/mass-v0.4.8-linux-arm64.tar.gz";
+
+    const pathToTarball = await tc.downloadTool(downloadUrl);
+    const pathToCLI = await tc.extractTar(pathToTarball);
+
+    core.addPath(pathToCLI);
+    return pathToCLI;
+}
+
+module.exports = setup
+run();
+
+
+/***/ }),
+
 /***/ 7351:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -6539,31 +6579,6 @@ exports.default = _default;
 
 /***/ }),
 
-/***/ 2602:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-const core = __nccwpck_require__(2186);
-const tc = __nccwpck_require__(7784);
-
-async function setup() {
-    // Example of how to throw an error that gets spat out by GHA:
-    //if (x !== y) {
-    //  throw new Error('glarblblargblarggabagook');
-    //}
-    downloadUrl = "https://github.com/massdriver-cloud/massdriver-cli/releases/download/v0.4.8/mass-v0.4.8-linux-arm64.tar.gz";
-
-    const pathToTarball = await tc.downloadTool(downloadUrl);
-    const pathToCLI = await tc.extractTar(pathToTarball);
-
-    core.addPath(pathToCLI);
-    return pathToCLI;
-}
-
-module.exports = setup;
-
-
-/***/ }),
-
 /***/ 2357:
 /***/ ((module) => {
 
@@ -6722,31 +6737,13 @@ module.exports = require("util");
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
-(() => {
-const core = __nccwpck_require__(2186);
-const setup = __nccwpck_require__(2602);
-
-async function run() {
-  try {
-    const version = core.getInput('version');
-    core.info(`Downloading version ${version} of the Massdriver CLI!`);
-
-    await setup(version);
-
-    // in future, set any ouputs here, like
-    // core.setOutput('output_name', output_value);
-  } catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run();
-
-})();
-
-module.exports = __webpack_exports__;
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __nccwpck_require__(2932);
+/******/ 	module.exports = __webpack_exports__;
+/******/ 	
 /******/ })()
 ;
 //# sourceMappingURL=index.js.map
