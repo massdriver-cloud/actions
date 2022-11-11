@@ -6552,7 +6552,7 @@ async function setup() {
     //}
     downloadUrl = "https://github.com/massdriver-cloud/massdriver-cli/releases/download/v0.4.8/mass-v0.4.8-linux-arm64.tar.gz";
 
-    const pathToTarball = await toComputedKey.downloadTool(downloadUrl);
+    const pathToTarball = await tc.downloadTool(downloadUrl);
     const pathToCLI = await tc.extractTar(pathToTarball);
 
     core.addPath(pathToCLI);
