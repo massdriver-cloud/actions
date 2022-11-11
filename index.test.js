@@ -10,7 +10,7 @@ const { expect } = require('@jest/globals');
 //});
 
 test('run setup', async () => {
-  await expect(setup('latest')).toReturn();
+  await expect(setup('latest')).resolves.toReturn();
 })
 
 // shows how the runner will run a javascript action with env / stdout protocol
