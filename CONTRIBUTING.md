@@ -18,17 +18,10 @@ GitHub Actions will run the entry point from the action.yml. Packaging assembles
 
 Actions are run from GitHub repos.  Packaging the action will create a packaged action in the dist folder.
 
-Run prepare
-
 ```bash
 npm run prepare
 ```
 
-Since the packaged index.js is run from the dist folder.
-
-```bash
-git add dist
-```
 ## Validate
 
 You can now validate the action by referencing `./` in a workflow in your repo (see [test.yml](.github/workflows/test.yml))

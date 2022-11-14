@@ -23,3 +23,4 @@ jobs:
     - uses: ./
       with:
         version: 'latest'
+    - run: mass help
