@@ -2,7 +2,6 @@ const core = require('@actions/core');
 const tc = require('@actions/tool-cache');
 const github = require('@actions/github');
 const os = require('os');
-import { HeadersInit} from 'node-fetch';
 import fetch from 'node-fetch';
 import { mkdir } from 'fs';
 

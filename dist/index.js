@@ -16,7 +16,6 @@ const os = __nccwpck_require__(2037);
 
 
 
-
 async function run() {
   try {
     const version = core.getInput('version', {required: false});
