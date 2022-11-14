@@ -12,13 +12,13 @@ async function run() {
     const repo = "massdriver-cli";
 
     const token = core.getInput('token', {required: false});
-    core.info(`token: ${token}`)
+    core.info(`token: ${token}`);
 
 
-    const octokit = github.getOctokit(token)
+    const octokit = github.getOctokit(token);
 
     const { data: versions } = await octokit.rest.repos.getLatestRelease({owner: owner, repo: repo});
-    core.info(`versions: ${versions}`)
+    core.info(`versions: ${versions}`);
 
     await setup(version);
 
@@ -34,10 +34,7 @@ async function setup(version) {
     //if (x !== y) {
     //  throw new Error('glarblblargblarggabagook');
     //}
-
-    // OS details
-    const platform = os.platform();
-    const arch = os.arch();
+    core.info(`version: ${version}`);
 
     downloadUrl = "https://github.com/massdriver-cloud/massdriver-cli/releases/download/v0.4.8/mass-v0.4.8-linux-arm64.tar.gz";
 
