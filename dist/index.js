@@ -26,7 +26,7 @@ async function setup(version) {
     //if (x !== y) {
     //  throw new Error('glarblblargblarggabagook');
     //}
-    downloadUrl = "https://github.com/massdriver-cloud/massdriver-cli/releases/download/v0.4.8/mass-v0.4.8-linux-arm64.tar.gz";
+    downloadUrl = "https://github.com/massdriver-cloud/massdriver-cli/releases/download/v0.4.8/mass-v0.4.8-linux-amd64.tar.gz";
 
     const pathToTarball = await tc.downloadTool(downloadUrl);
     const pathToCLI = await tc.extractTar(pathToTarball);
