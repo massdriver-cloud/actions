@@ -5,6 +5,10 @@ inputs:
     description: 'The version of the Massdriver CLI to download'
     required: false
     default: 'latest'
+  token:
+    description: 'A GitHub token. Typically this will be secrets.GITHUB_TOKEN'
+    required: false
+    default: ${{ secrets.GITHUB_TOKEN }}
 runs:
   using: 'node16'
   main: 'dist/index.js'

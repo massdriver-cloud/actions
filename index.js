@@ -11,12 +11,14 @@ async function run() {
     const owner = "massdriver-cloud";
     const repo = "massdriver-cli";
 
-    const token = core.getInput('token');
+    const token = core.getInput('token', {required: false});
+    core.info(`token: ${token}`)
+
 
     const octokit = github.getOctokit(token)
 
     const { data: versions } = await octokit.rest.repos.getLatestRelease({owner: owner, repo: repo});
-    console.log(versions)
+    core.info(`versions: ${versions}`)
 
     await setup(version);
 
