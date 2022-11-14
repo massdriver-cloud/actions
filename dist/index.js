@@ -13638,7 +13638,7 @@ async function run() {
 
 async function getRelease(octokit, version) {
   if (version === 'latest') {
-    return await octokit.rest.repos.getLatestRelease("massdriver-cloud", "massdriver-cli");
+    return await octokit.rest.repos.getLatestRelease({owner: "massdriver-cloud", repo: "massdriver-cli"});
   } else {
     return await octokit.rest.repos.getRelease({
       owner: "massdriver-cloud",
