@@ -13622,12 +13622,15 @@ async function run() {
     console.log("release:")
     console.log(release)
     const releaseResult = getReleaseResult(release);
-    console.log("releaseResult:")
-    console.log(releaseResult)
+    const asset_id = releaseResult['id'];
+    console.log("asset_id:");
+    console.log(asset_id);
+    const pathToCLI = downloadFile(asset_id, token);
+    console.log("pathToCLI:");
+    console.log(pathToCLI);
 
     
 
-    await setup(version);
 
     // in future, set any ouputs here, like
     // core.setOutput('output_name', output_value);
