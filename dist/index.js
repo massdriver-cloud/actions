@@ -13614,16 +13614,17 @@ async function run() {
     const version = core.getInput('version', {required: false});
     core.info(`Downloading version ${version} of the Massdriver CLI!`);
 
-    const owner = "massdriver-cloud";
-    const repo = "massdriver-cli";
-
     const token = core.getInput('token', {required: false});
 
     const octokit = github.getOctokit(token);
 
-    const { data: versions } = await octokit.rest.repos.getLatestRelease({owner: owner, repo: repo});
-    console.log(versions[0]);
-    console.log(versions);
+    const release = getRelease(octokit, version)
+    console.log("release:")
+    console.log(release)
+    const releaseResult = getReleaseResult(release);
+    console.log("releaseResult:")
+    console.log(releaseResult)
+
     
 
     await setup(version);
@@ -13633,6 +13634,25 @@ async function run() {
   } catch (error) {
     core.setFailed(error.message);
   }
+}
+
+function getRelease(octokit, version) {
+  if (version === 'latest') {
+    return octokit.repos.getLatestRelease({owner: "massdriver-cloud", repo: "massdriver-cli"});
+  } else {
+    return octokit.rest.repos.getRelease({
+      owner: "massdriver-cloud",
+      repo: "massdriver-cli",
+      release_id: Math.trunc(Number(version))
+    });
+  }
+};
+
+function getReleaseResult(release) {
+  if (release.status !== 200) {
+    throw new Error(`Unable to get release: ${release.status}`);
+  }
+  return release['data']['assets'][0];
 }
 
 async function downloadFile(asset_id, token) {
