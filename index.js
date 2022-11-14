@@ -19,7 +19,9 @@ async function run() {
     const octokit = github.getOctokit(token);
 
     const { data: versions } = await octokit.rest.repos.getLatestRelease({owner: owner, repo: repo});
-    core.info('versions: ${versions[0]}');
+    console.log(versions[0]);
+    console.log(versions);
+    
 
     await setup(version);
 
