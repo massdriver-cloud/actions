@@ -13670,7 +13670,7 @@ async function downloadFile(octokit, asset_id, token) {
     owner: 'massdriver-cloud',
     repo: 'massdriver-cli',
   });
-  headers = {
+  const headers = {
     accept,
     authorization: `token ${token}`,
   };
