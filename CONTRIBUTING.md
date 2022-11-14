@@ -20,6 +20,7 @@ Actions are run from GitHub repos.  Packaging the action will create a packaged 
 
 ```bash
 npm run prepare
+git add dist
 ```
 
 ## Validate
@@ -34,6 +35,20 @@ with:
 
 See the [actions tab](https://github.com/actions/typescript-action/actions) for runs of this action! :rocket:
 
-## Usage:
+# Act
 
-After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md) to reference the stable and latest V1 action
+[nektos/act](https://github.com/nektos/act) is a tool for testing GitHub Actions locally.
+
+After installing it, you can for example run the `test` job locally via
+
+```bash
+act -j test
+```
+
+To list available jobs, run
+
+```bash
+act push -l
+```
+
+to list all jobs that are executed on a push.
