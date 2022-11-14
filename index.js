@@ -13,7 +13,7 @@ async function run() {
 
     const octokit = github.getOctokit(token);
 
-    const release = getRelease(octokit, version)
+    const release = await getRelease(octokit, version)
     console.log("release:")
     console.log(release)
     const releaseResult = getReleaseResult(release);
@@ -31,11 +31,11 @@ async function run() {
   }
 }
 
-function getRelease(octokit, version) {
+async function getRelease(octokit, version) {
   if (version === 'latest') {
-    return octokit.rest.repos.getLatestRelease("massdriver-cloud", "massdriver-cli");
+    return await octokit.rest.repos.getLatestRelease("massdriver-cloud", "massdriver-cli");
   } else {
-    return octokit.rest.repos.getRelease({
+    return await octokit.rest.repos.getRelease({
       owner: "massdriver-cloud",
       repo: "massdriver-cli",
       release_id: Math.trunc(Number(version))
