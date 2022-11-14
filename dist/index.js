@@ -13675,13 +13675,6 @@ async function downloadFile(octokit, asset_id, token) {
     authorization: `token ${token}`,
   };
 
-  const response = await fetch(url, { body, headers, method});
-  if (!response.ok) {
-    const text = await response.text();
-    core.warning(text);
-    throw new Error('Invalid response');
-  }
-
   const pathToCLIZip = await tc.downloadUrl(url, headers);
   const pathToCLI = await tc.extractZip(pathToCLIZip);
 
