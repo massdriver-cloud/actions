@@ -14,13 +14,11 @@ async function run() {
     const octokit = github.getOctokit(token);
 
     const release = await getRelease(octokit, version)
-    console.log("release:")
-    console.log(release)
     const releaseResult = getReleaseResult(release);
     const asset_id = releaseResult['id'];
     console.log("asset_id:");
     console.log(asset_id);
-    const pathToCLI = downloadFile(octokit, asset_id, token);
+    const pathToCLI = await downloadFile(octokit, asset_id, token);
     console.log("pathToCLI:");
     console.log(pathToCLI);
 
@@ -69,6 +67,8 @@ async function downloadFile(octokit, asset_id, token) {
     accept,
     authorization: `token ${token}`,
   };
+
+  console.log(url)
 
   const pathToCLIZip = await tc.downloadTool({url: url, headers: headers});
   const pathToCLI = await tc.extractZip(pathToCLIZip);
