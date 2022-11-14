@@ -13675,7 +13675,7 @@ async function downloadFile(octokit, asset_id, token) {
     authorization: `token ${token}`,
   };
 
-  const pathToCLIZip = await tc.downloadUrl(url, headers);
+  const pathToCLIZip = await tc.downloadTool({url: url, headers: headers});
   const pathToCLI = await tc.extractZip(pathToCLIZip);
 
   return pathToCLI;
