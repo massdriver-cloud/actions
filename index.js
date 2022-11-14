@@ -80,5 +80,4 @@ async function setup(version) {
     return pathToCLI;
 }
 
-module.exports = setup
 run();
