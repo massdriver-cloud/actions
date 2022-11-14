@@ -11,7 +11,7 @@ const os = __nccwpck_require__(2037);
 
 async function run() {
   try {
-    const version = core.getInput('version');
+    const version = core.getInput('version', {required: false});
     core.info(`Downloading version ${version} of the Massdriver CLI!`);
 
     const owner = "massdriver-cloud";
