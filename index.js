@@ -32,7 +32,7 @@ async function run() {
   }
 }
 
-function downloadFile(asset_id, token) {
+async function downloadFile(asset_id, token) {
   const {
     body,
     headers: { accept, 'user-agent': userAgent },
@@ -44,15 +44,13 @@ function downloadFile(asset_id, token) {
     headers: {
       accept: 'application/octet-stream',
     },
-    'massdriver-cloud',
-    'massdriver-cli',
+    owner: 'massdriver-cloud',
+    repo: 'massdriver-cli',
   });
   headers = {
     accept,
     authorization: `token ${token}`,
   };
-  if (typeof userAgent !== 'undefined')
-    headers = { ...headers, 'user-agent': userAgent };
 
   const response = await fetch(url, { body, headers, method});
   if (!response.ok) {

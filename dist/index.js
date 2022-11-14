@@ -2,12 +2,20 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 2932:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+/***/ ((module, __webpack_exports__, __nccwpck_require__) => {
 
+"use strict";
+__nccwpck_require__.r(__webpack_exports__);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(7147);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_0__);
+/* module decorator */ module = __nccwpck_require__.hmd(module);
 const core = __nccwpck_require__(2186);
 const tc = __nccwpck_require__(7784);
 const github = __nccwpck_require__(5438);
 const os = __nccwpck_require__(2037);
+
+
+
 
 async function run() {
   try {
@@ -18,13 +26,13 @@ async function run() {
     const repo = "massdriver-cli";
 
     const token = core.getInput('token', {required: false});
-    core.info(`token: ${token}`);
-
 
     const octokit = github.getOctokit(token);
 
     const { data: versions } = await octokit.rest.repos.getLatestRelease({owner: owner, repo: repo});
-    core.info(`versions: ${versions}`);
+    console.log(versions[0]);
+    console.log(versions);
+    
 
     await setup(version);
 
@@ -33,6 +41,39 @@ async function run() {
   } catch (error) {
     core.setFailed(error.message);
   }
+}
+
+async function downloadFile(asset_id, token) {
+  const {
+    body,
+    headers: { accept, 'user-agent': userAgent },
+    method,
+    url,
+  } = octokit.request.endpoint('GET /repos/:owner/:repo/releases/assets/:asset_id',
+  {
+    asset_id: asset_id,
+    headers: {
+      accept: 'application/octet-stream',
+    },
+    owner: 'massdriver-cloud',
+    repo: 'massdriver-cli',
+  });
+  headers = {
+    accept,
+    authorization: `token ${token}`,
+  };
+
+  const response = await fetch(url, { body, headers, method});
+  if (!response.ok) {
+    const text = await response.text();
+    core.warning(text);
+    throw new Error('Invalid response');
+  }
+
+  const pathToCLIZip = await tc.downloadUrl(url, headers);
+  const pathToCLI = await tc.extractZip(pathToCLIZip);
+
+  return pathToCLI;
 }
 
 async function setup(version) {
@@ -8079,7 +8120,7 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var endpoint = __nccwpck_require__(9440);
 var universalUserAgent = __nccwpck_require__(5030);
 var isPlainObject = __nccwpck_require__(3287);
-var nodeFetch = _interopDefault(__nccwpck_require__(467));
+var nodeFetch = _interopDefault(__nccwpck_require__(1768));
 var requestError = __nccwpck_require__(537);
 
 const VERSION = "5.6.3";
@@ -8251,262 +8292,7 @@ exports.request = request;
 
 /***/ }),
 
-/***/ 3682:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-var register = __nccwpck_require__(4670);
-var addHook = __nccwpck_require__(5549);
-var removeHook = __nccwpck_require__(6819);
-
-// bind with array of arguments: https://stackoverflow.com/a/21792913
-var bind = Function.bind;
-var bindable = bind.bind(bind);
-
-function bindApi(hook, state, name) {
-  var removeHookRef = bindable(removeHook, null).apply(
-    null,
-    name ? [state, name] : [state]
-  );
-  hook.api = { remove: removeHookRef };
-  hook.remove = removeHookRef;
-  ["before", "error", "after", "wrap"].forEach(function (kind) {
-    var args = name ? [state, kind, name] : [state, kind];
-    hook[kind] = hook.api[kind] = bindable(addHook, null).apply(null, args);
-  });
-}
-
-function HookSingular() {
-  var singularHookName = "h";
-  var singularHookState = {
-    registry: {},
-  };
-  var singularHook = register.bind(null, singularHookState, singularHookName);
-  bindApi(singularHook, singularHookState, singularHookName);
-  return singularHook;
-}
-
-function HookCollection() {
-  var state = {
-    registry: {},
-  };
-
-  var hook = register.bind(null, state);
-  bindApi(hook, state);
-
-  return hook;
-}
-
-var collectionHookDeprecationMessageDisplayed = false;
-function Hook() {
-  if (!collectionHookDeprecationMessageDisplayed) {
-    console.warn(
-      '[before-after-hook]: "Hook()" repurposing warning, use "Hook.Collection()". Read more: https://git.io/upgrade-before-after-hook-to-1.4'
-    );
-    collectionHookDeprecationMessageDisplayed = true;
-  }
-  return HookCollection();
-}
-
-Hook.Singular = HookSingular.bind();
-Hook.Collection = HookCollection.bind();
-
-module.exports = Hook;
-// expose constructors as a named property for TypeScript
-module.exports.Hook = Hook;
-module.exports.Singular = Hook.Singular;
-module.exports.Collection = Hook.Collection;
-
-
-/***/ }),
-
-/***/ 5549:
-/***/ ((module) => {
-
-module.exports = addHook;
-
-function addHook(state, kind, name, hook) {
-  var orig = hook;
-  if (!state.registry[name]) {
-    state.registry[name] = [];
-  }
-
-  if (kind === "before") {
-    hook = function (method, options) {
-      return Promise.resolve()
-        .then(orig.bind(null, options))
-        .then(method.bind(null, options));
-    };
-  }
-
-  if (kind === "after") {
-    hook = function (method, options) {
-      var result;
-      return Promise.resolve()
-        .then(method.bind(null, options))
-        .then(function (result_) {
-          result = result_;
-          return orig(result, options);
-        })
-        .then(function () {
-          return result;
-        });
-    };
-  }
-
-  if (kind === "error") {
-    hook = function (method, options) {
-      return Promise.resolve()
-        .then(method.bind(null, options))
-        .catch(function (error) {
-          return orig(error, options);
-        });
-    };
-  }
-
-  state.registry[name].push({
-    hook: hook,
-    orig: orig,
-  });
-}
-
-
-/***/ }),
-
-/***/ 4670:
-/***/ ((module) => {
-
-module.exports = register;
-
-function register(state, name, method, options) {
-  if (typeof method !== "function") {
-    throw new Error("method for before hook must be a function");
-  }
-
-  if (!options) {
-    options = {};
-  }
-
-  if (Array.isArray(name)) {
-    return name.reverse().reduce(function (callback, name) {
-      return register.bind(null, state, name, callback, options);
-    }, method)();
-  }
-
-  return Promise.resolve().then(function () {
-    if (!state.registry[name]) {
-      return method(options);
-    }
-
-    return state.registry[name].reduce(function (method, registered) {
-      return registered.hook.bind(null, method, options);
-    }, method)();
-  });
-}
-
-
-/***/ }),
-
-/***/ 6819:
-/***/ ((module) => {
-
-module.exports = removeHook;
-
-function removeHook(state, name, method) {
-  if (!state.registry[name]) {
-    return;
-  }
-
-  var index = state.registry[name]
-    .map(function (registered) {
-      return registered.orig;
-    })
-    .indexOf(method);
-
-  if (index === -1) {
-    return;
-  }
-
-  state.registry[name].splice(index, 1);
-}
-
-
-/***/ }),
-
-/***/ 8932:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-
-class Deprecation extends Error {
-  constructor(message) {
-    super(message); // Maintains proper stack trace (only available on V8)
-
-    /* istanbul ignore next */
-
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
-    }
-
-    this.name = 'Deprecation';
-  }
-
-}
-
-exports.Deprecation = Deprecation;
-
-
-/***/ }),
-
-/***/ 3287:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-
-/*!
- * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
- *
- * Copyright (c) 2014-2017, Jon Schlinkert.
- * Released under the MIT License.
- */
-
-function isObject(o) {
-  return Object.prototype.toString.call(o) === '[object Object]';
-}
-
-function isPlainObject(o) {
-  var ctor,prot;
-
-  if (isObject(o) === false) return false;
-
-  // If has modified constructor
-  ctor = o.constructor;
-  if (ctor === undefined) return true;
-
-  // If has modified prototype
-  prot = ctor.prototype;
-  if (isObject(prot) === false) return false;
-
-  // If constructor does not have an Object-specific method
-  if (prot.hasOwnProperty('isPrototypeOf') === false) {
-    return false;
-  }
-
-  // Most likely a plain Object
-  return true;
-}
-
-exports.isPlainObject = isPlainObject;
-
-
-/***/ }),
-
-/***/ 467:
+/***/ 1768:
 /***/ ((module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -8519,7 +8305,7 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var Stream = _interopDefault(__nccwpck_require__(2781));
 var http = _interopDefault(__nccwpck_require__(3685));
 var Url = _interopDefault(__nccwpck_require__(7310));
-var whatwgUrl = _interopDefault(__nccwpck_require__(3323));
+var whatwgUrl = _interopDefault(__nccwpck_require__(301));
 var https = _interopDefault(__nccwpck_require__(5687));
 var zlib = _interopDefault(__nccwpck_require__(9796));
 
@@ -10211,14 +9997,14 @@ exports.FetchError = FetchError;
 
 /***/ }),
 
-/***/ 2299:
+/***/ 3039:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
 
 
 var punycode = __nccwpck_require__(5477);
-var mappingTable = __nccwpck_require__(1907);
+var mappingTable = __nccwpck_require__(6492);
 
 var PROCESSING_OPTIONS = {
   TRANSITIONAL: 0,
@@ -10412,7 +10198,7 @@ module.exports.PROCESSING_OPTIONS = PROCESSING_OPTIONS;
 
 /***/ }),
 
-/***/ 5871:
+/***/ 6542:
 /***/ ((module) => {
 
 "use strict";
@@ -10609,12 +10395,12 @@ conversions["RegExp"] = function (V, opts) {
 
 /***/ }),
 
-/***/ 8262:
+/***/ 394:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
-const usm = __nccwpck_require__(33);
+const usm = __nccwpck_require__(1234);
 
 exports.implementation = class URLImpl {
   constructor(constructorArgs) {
@@ -10817,15 +10603,15 @@ exports.implementation = class URLImpl {
 
 /***/ }),
 
-/***/ 653:
+/***/ 2047:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
 
 
-const conversions = __nccwpck_require__(5871);
-const utils = __nccwpck_require__(276);
-const Impl = __nccwpck_require__(8262);
+const conversions = __nccwpck_require__(6542);
+const utils = __nccwpck_require__(3387);
+const Impl = __nccwpck_require__(394);
 
 const impl = utils.implSymbol;
 
@@ -11021,32 +10807,32 @@ module.exports = {
 
 /***/ }),
 
-/***/ 3323:
+/***/ 301:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 
-exports.URL = __nccwpck_require__(653)["interface"];
-exports.serializeURL = __nccwpck_require__(33).serializeURL;
-exports.serializeURLOrigin = __nccwpck_require__(33).serializeURLOrigin;
-exports.basicURLParse = __nccwpck_require__(33).basicURLParse;
-exports.setTheUsername = __nccwpck_require__(33).setTheUsername;
-exports.setThePassword = __nccwpck_require__(33).setThePassword;
-exports.serializeHost = __nccwpck_require__(33).serializeHost;
-exports.serializeInteger = __nccwpck_require__(33).serializeInteger;
-exports.parseURL = __nccwpck_require__(33).parseURL;
+exports.URL = __nccwpck_require__(2047)["interface"];
+exports.serializeURL = __nccwpck_require__(1234).serializeURL;
+exports.serializeURLOrigin = __nccwpck_require__(1234).serializeURLOrigin;
+exports.basicURLParse = __nccwpck_require__(1234).basicURLParse;
+exports.setTheUsername = __nccwpck_require__(1234).setTheUsername;
+exports.setThePassword = __nccwpck_require__(1234).setThePassword;
+exports.serializeHost = __nccwpck_require__(1234).serializeHost;
+exports.serializeInteger = __nccwpck_require__(1234).serializeInteger;
+exports.parseURL = __nccwpck_require__(1234).parseURL;
 
 
 /***/ }),
 
-/***/ 33:
+/***/ 1234:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
 
 const punycode = __nccwpck_require__(5477);
-const tr46 = __nccwpck_require__(2299);
+const tr46 = __nccwpck_require__(3039);
 
 const specialSchemes = {
   ftp: 21,
@@ -12345,7 +12131,7 @@ module.exports.parseURL = function (input, options) {
 
 /***/ }),
 
-/***/ 276:
+/***/ 3387:
 /***/ ((module) => {
 
 "use strict";
@@ -12369,6 +12155,261 @@ module.exports.implForWrapper = function (wrapper) {
   return wrapper[module.exports.implSymbol];
 };
 
+
+
+/***/ }),
+
+/***/ 3682:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+var register = __nccwpck_require__(4670);
+var addHook = __nccwpck_require__(5549);
+var removeHook = __nccwpck_require__(6819);
+
+// bind with array of arguments: https://stackoverflow.com/a/21792913
+var bind = Function.bind;
+var bindable = bind.bind(bind);
+
+function bindApi(hook, state, name) {
+  var removeHookRef = bindable(removeHook, null).apply(
+    null,
+    name ? [state, name] : [state]
+  );
+  hook.api = { remove: removeHookRef };
+  hook.remove = removeHookRef;
+  ["before", "error", "after", "wrap"].forEach(function (kind) {
+    var args = name ? [state, kind, name] : [state, kind];
+    hook[kind] = hook.api[kind] = bindable(addHook, null).apply(null, args);
+  });
+}
+
+function HookSingular() {
+  var singularHookName = "h";
+  var singularHookState = {
+    registry: {},
+  };
+  var singularHook = register.bind(null, singularHookState, singularHookName);
+  bindApi(singularHook, singularHookState, singularHookName);
+  return singularHook;
+}
+
+function HookCollection() {
+  var state = {
+    registry: {},
+  };
+
+  var hook = register.bind(null, state);
+  bindApi(hook, state);
+
+  return hook;
+}
+
+var collectionHookDeprecationMessageDisplayed = false;
+function Hook() {
+  if (!collectionHookDeprecationMessageDisplayed) {
+    console.warn(
+      '[before-after-hook]: "Hook()" repurposing warning, use "Hook.Collection()". Read more: https://git.io/upgrade-before-after-hook-to-1.4'
+    );
+    collectionHookDeprecationMessageDisplayed = true;
+  }
+  return HookCollection();
+}
+
+Hook.Singular = HookSingular.bind();
+Hook.Collection = HookCollection.bind();
+
+module.exports = Hook;
+// expose constructors as a named property for TypeScript
+module.exports.Hook = Hook;
+module.exports.Singular = Hook.Singular;
+module.exports.Collection = Hook.Collection;
+
+
+/***/ }),
+
+/***/ 5549:
+/***/ ((module) => {
+
+module.exports = addHook;
+
+function addHook(state, kind, name, hook) {
+  var orig = hook;
+  if (!state.registry[name]) {
+    state.registry[name] = [];
+  }
+
+  if (kind === "before") {
+    hook = function (method, options) {
+      return Promise.resolve()
+        .then(orig.bind(null, options))
+        .then(method.bind(null, options));
+    };
+  }
+
+  if (kind === "after") {
+    hook = function (method, options) {
+      var result;
+      return Promise.resolve()
+        .then(method.bind(null, options))
+        .then(function (result_) {
+          result = result_;
+          return orig(result, options);
+        })
+        .then(function () {
+          return result;
+        });
+    };
+  }
+
+  if (kind === "error") {
+    hook = function (method, options) {
+      return Promise.resolve()
+        .then(method.bind(null, options))
+        .catch(function (error) {
+          return orig(error, options);
+        });
+    };
+  }
+
+  state.registry[name].push({
+    hook: hook,
+    orig: orig,
+  });
+}
+
+
+/***/ }),
+
+/***/ 4670:
+/***/ ((module) => {
+
+module.exports = register;
+
+function register(state, name, method, options) {
+  if (typeof method !== "function") {
+    throw new Error("method for before hook must be a function");
+  }
+
+  if (!options) {
+    options = {};
+  }
+
+  if (Array.isArray(name)) {
+    return name.reverse().reduce(function (callback, name) {
+      return register.bind(null, state, name, callback, options);
+    }, method)();
+  }
+
+  return Promise.resolve().then(function () {
+    if (!state.registry[name]) {
+      return method(options);
+    }
+
+    return state.registry[name].reduce(function (method, registered) {
+      return registered.hook.bind(null, method, options);
+    }, method)();
+  });
+}
+
+
+/***/ }),
+
+/***/ 6819:
+/***/ ((module) => {
+
+module.exports = removeHook;
+
+function removeHook(state, name, method) {
+  if (!state.registry[name]) {
+    return;
+  }
+
+  var index = state.registry[name]
+    .map(function (registered) {
+      return registered.orig;
+    })
+    .indexOf(method);
+
+  if (index === -1) {
+    return;
+  }
+
+  state.registry[name].splice(index, 1);
+}
+
+
+/***/ }),
+
+/***/ 8932:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+class Deprecation extends Error {
+  constructor(message) {
+    super(message); // Maintains proper stack trace (only available on V8)
+
+    /* istanbul ignore next */
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
+
+    this.name = 'Deprecation';
+  }
+
+}
+
+exports.Deprecation = Deprecation;
+
+
+/***/ }),
+
+/***/ 3287:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+/*!
+ * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+ *
+ * Copyright (c) 2014-2017, Jon Schlinkert.
+ * Released under the MIT License.
+ */
+
+function isObject(o) {
+  return Object.prototype.toString.call(o) === '[object Object]';
+}
+
+function isPlainObject(o) {
+  var ctor,prot;
+
+  if (isObject(o) === false) return false;
+
+  // If has modified constructor
+  ctor = o.constructor;
+  if (ctor === undefined) return true;
+
+  // If has modified prototype
+  prot = ctor.prototype;
+  if (isObject(prot) === false) return false;
+
+  // If constructor does not have an Object-specific method
+  if (prot.hasOwnProperty('isPrototypeOf') === false) {
+    return false;
+  }
+
+  // Most likely a plain Object
+  return true;
+}
+
+exports.isPlainObject = isPlainObject;
 
 
 /***/ }),
@@ -13566,7 +13607,7 @@ module.exports = require("zlib");
 
 /***/ }),
 
-/***/ 1907:
+/***/ 6492:
 /***/ ((module) => {
 
 "use strict";
@@ -13588,8 +13629,8 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
+/******/ 			id: moduleId,
+/******/ 			loaded: false,
 /******/ 			exports: {}
 /******/ 		};
 /******/ 	
@@ -13602,11 +13643,69 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 			if(threw) delete __webpack_module_cache__[moduleId];
 /******/ 		}
 /******/ 	
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__nccwpck_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__nccwpck_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/harmony module decorator */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.hmd = (module) => {
+/******/ 			module = Object.create(module);
+/******/ 			if (!module.children) module.children = [];
+/******/ 			Object.defineProperty(module, 'exports', {
+/******/ 				enumerable: true,
+/******/ 				set: () => {
+/******/ 					throw new Error('ES Modules may not assign module.exports or exports.*, Use ESM export syntax, instead: ' + module.id);
+/******/ 				}
+/******/ 			});
+/******/ 			return module;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
