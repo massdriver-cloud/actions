@@ -13625,12 +13625,9 @@ async function run() {
     const asset_id = releaseResult['id'];
     console.log("asset_id:");
     console.log(asset_id);
-    const pathToCLI = downloadFile(asset_id, token);
+    const pathToCLI = downloadFile(octokit, asset_id, token);
     console.log("pathToCLI:");
     console.log(pathToCLI);
-
-    
-
 
     // in future, set any ouputs here, like
     // core.setOutput('output_name', output_value);
@@ -13658,7 +13655,7 @@ function getReleaseResult(release) {
   return release['data']['assets'][0];
 }
 
-async function downloadFile(asset_id, token) {
+async function downloadFile(octokit, asset_id, token) {
   const {
     body,
     headers: { accept, 'user-agent': userAgent },
