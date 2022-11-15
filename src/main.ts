@@ -106,7 +106,7 @@ const printOutput = (release: GetReleaseResult): void => {
   core.info(`name: ${release.data.name}`);
 };
 
-const install = async (target: string) => {
+const install = async (target: string): Promise<void> => {
   core.info(`target: ${target}`);
   const pathToCLI = await tc.extractZip(target);
   core.info(`installed to ${pathToCLI}`);

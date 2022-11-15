@@ -1,6 +1,6 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Setup Massdriver CLI'
+description: 'Sets up the Massdriver CLI'
+author: 'Massdriver, Inc.'
 inputs:
   version:
     description: 'The release version to fetch from in the form `tags/<tag_name>` or `<release_id>`.'
