@@ -104,15 +104,12 @@ const fetchAssetFile = (
   });
 
 const printOutput = (release: GetReleaseResult): void => {
-  core.setOutput('version', release.data.tag_name);
-  core.setOutput('name', release.data.name);
-  core.setOutput('body', release.data.body);
+  core.info(`version: ${release.data.tag_name}`);
+  core.info(`name: ${release.data.name}`);
 };
 
 const filterByFileName = (file: string) => (asset: Asset) =>
   file === asset.name;
-const filterByRegex = (file: string) => (asset: Asset) =>
-  new RegExp(file).test(asset.name);
 
 const main = async (): Promise<void> => {
   const owner = 'massdriver-cloud';
@@ -120,22 +117,19 @@ const main = async (): Promise<void> => {
   const token = core.getInput('token', { required: false });
   const version = core.getInput('version', { required: false });
   const file = core.getInput('file', { required: true });
-  const usesRegex = core.getBooleanInput('regex', { required: false });
   const target = file;
 
   const octokit = github.getOctokit(token);
   const release = await getRelease(octokit, { owner, repo, version });
 
-  const assetFilterFn = usesRegex
-    ? filterByRegex(file)
-    : filterByFileName(file);
+  const assetFilterFn = filterByFileName(file);
 
   const assets = release.data.assets.filter(assetFilterFn);
   if (assets.length === 0) throw new Error('Could not find asset id');
   for (const asset of assets) {
     await fetchAssetFile(octokit, {
       id: asset.id,
-      outputPath: usesRegex ? `${target}${asset.name}` : target,
+      outputPath: target,
       owner,
       repo,
       token,

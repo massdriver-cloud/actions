@@ -13,11 +13,6 @@ inputs:
     description: 'The GitHub token. Typically this will be secrets.GITHUB_TOKEN'
     required: false
     default: ${{ github.token }}
-  regex:
-    description: 'Use regex for file input'
-    type: boolean
-    required: false
-    default: false
 runs:
   using: 'node16'
   main: 'dist/index.js'
