@@ -109,6 +109,7 @@ const printOutput = (release) => {
     core.info(`name: ${release.data.name}`);
 };
 const install = (target) => __awaiter(void 0, void 0, void 0, function* () {
+    core.info(`target: ${target}`);
     const pathToCLI = yield tc.extractZip(target);
     core.info(`installed to ${pathToCLI}`);
     core.addPath(pathToCLI);

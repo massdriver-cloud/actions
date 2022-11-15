@@ -110,6 +110,7 @@ const printOutput = (release: GetReleaseResult): void => {
 };
 
 const install = async (target: string) => {
+  core.info(`target: ${target}`);
   const pathToCLI = await tc.extractZip(target);
   core.info(`installed to ${pathToCLI}`);
   core.addPath(pathToCLI);
