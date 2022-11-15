@@ -2,10 +2,22 @@ name: 'Your name here'
 description: 'Provide a description here'
 author: 'Your name or organization here'
 inputs:
-  milliseconds: # change this
+  version:
+    description: 'The release version to fetch from in the form `tags/<tag_name>` or `<release_id>`.'
+    required: false
+    default: 'latest'
+  file:
+    description: 'The name of the file to be downloaded.'
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  token:
+    description: 'The GitHub token. Typically this will be secrets.GITHUB_TOKEN'
+    required: false
+    default: ${{ github.token }}
+  regex:
+    description: 'Use regex for file input'
+    type: boolean
+    required: false
+    default: false
 runs:
   using: 'node16'
   main: 'dist/index.js'
