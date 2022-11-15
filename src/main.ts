@@ -91,6 +91,7 @@ const baseFetchAssetFile = async (
   }
   const blob = await response.blob();
   const arrayBuffer = await blob.arrayBuffer();
+  core.info(`Writing to ${outputPath}`);
   await mkdir(dirname(outputPath), { recursive: true });
   void (await writeFile(outputPath, new Uint8Array(arrayBuffer)));
 };

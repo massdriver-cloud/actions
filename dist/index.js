@@ -97,6 +97,7 @@ const baseFetchAssetFile = (octokit, { id, outputPath, owner, repo, token }) => 
     }
     const blob = yield response.blob();
     const arrayBuffer = yield blob.arrayBuffer();
+    core.info(`Writing to ${outputPath}`);
     yield (0, promises_1.mkdir)((0, path_1.dirname)(outputPath), { recursive: true });
     void (yield (0, promises_1.writeFile)(outputPath, new Uint8Array(arrayBuffer)));
 });
