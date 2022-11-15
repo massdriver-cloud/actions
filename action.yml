@@ -1,10 +1,11 @@
-name: 'Massdriver Setup Action'
-description: 'Sets up the Massdriver CLI'
+name: 'Your name here'
+description: 'Provide a description here'
+author: 'Your name or organization here'
 inputs:
-  version: 
-    description: 'The version of the Massdriver CLI to download'
-    required: false
-    default: 'latest'
+  milliseconds: # change this
+    required: true
+    description: 'input description here'
+    default: 'default value if applicable'
 runs:
   using: 'node16'
   main: 'dist/index.js'
