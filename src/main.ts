@@ -7,6 +7,7 @@ import retry from 'async-retry';
 import type { Context } from '@actions/github/lib/context';
 import type { HeadersInit } from 'node-fetch';
 import fetch from 'node-fetch';
+import * as tc from '@actions/tool-cache';
 
 interface GetRepoResult {
   readonly owner: string;
@@ -108,6 +109,12 @@ const printOutput = (release: GetReleaseResult): void => {
   core.info(`name: ${release.data.name}`);
 };
 
+const install = async (target: string) => {
+  const pathToCLI = await tc.extractZip(target);
+  core.info(`installed to ${pathToCLI}`);
+  core.addPath(pathToCLI);
+}
+
 const filterByFileName = (file: string) => (asset: Asset) =>
   file === asset.name;
 
@@ -135,6 +142,7 @@ const main = async (): Promise<void> => {
       token,
     });
   }
+  install(target);
   printOutput(release);
 };
 
