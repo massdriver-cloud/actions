@@ -1,12 +1,12 @@
 /* eslint-disable no-void */
-import { mkdir, writeFile } from 'fs/promises';
-import { dirname } from 'path';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
+import * as tc from '@actions/tool-cache';
 import retry from 'async-retry';
+import { mkdir, writeFile } from 'fs/promises';
 import type { HeadersInit } from 'node-fetch';
 import fetch from 'node-fetch';
-import * as tc from '@actions/tool-cache';
+import { dirname } from 'path';
 
 interface GetReleaseOptions {
   readonly owner: string;
@@ -22,6 +22,7 @@ const getRelease = (
   if (version === 'latest') {
     return octokit.rest.repos.getLatestRelease({ owner, repo });
   } else if (tagsMatch !== null && tagsMatch[1]) {
+    // TODO: maybe here
     return octokit.rest.repos.getReleaseByTag({
       owner,
       repo,
@@ -134,13 +135,13 @@ const main = async (): Promise<void> => {
   for (const asset of assets) {
     await fetchAssetFile(octokit, {
       id: asset.id,
-      outputPath: target,
+      outputPath: '/' + target,
       owner,
       repo,
       token,
     });
   }
-  install(target);
+  install('/' + target);
   printOutput(release);
 };
 
