@@ -20685,7 +20685,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-/* eslint-disable no-void */
+/* eslint-disable prettier/prettier */
+/* eslint-disable sort-imports */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const tc = __importStar(__nccwpck_require__(7784));
@@ -20693,7 +20695,7 @@ const async_retry_1 = __importDefault(__nccwpck_require__(3415));
 const promises_1 = __nccwpck_require__(9225);
 const node_fetch_1 = __importDefault(__nccwpck_require__(6882));
 const path_1 = __nccwpck_require__(5622);
-const getRelease = (octokit, { owner, repo, version }) => {
+const getRelease = (octokit, { owner, repo, version }) => __awaiter(void 0, void 0, void 0, function* () {
     const tagsMatch = version.match(/^tags\/(.*)$/);
     if (version === 'latest') {
         return octokit.rest.repos.getLatestRelease({ owner, repo });
@@ -20703,29 +20705,29 @@ const getRelease = (octokit, { owner, repo, version }) => {
         return octokit.rest.repos.getReleaseByTag({
             owner,
             repo,
-            tag: tagsMatch[1],
+            tag: tagsMatch[1]
         });
     }
     else {
         return octokit.rest.repos.getRelease({
             owner,
             repo,
-            release_id: Math.trunc(Number(version)),
+            release_id: Math.trunc(Number(version))
         });
     }
-};
+});
 const baseFetchAssetFile = (octokit, { id, outputPath, owner, repo, token }) => __awaiter(void 0, void 0, void 0, function* () {
-    const { body, headers: { accept, 'user-agent': userAgent }, method, url, } = octokit.request.endpoint('GET /repos/:owner/:repo/releases/assets/:asset_id', {
+    const { body, headers: { accept, 'user-agent': userAgent }, method, url } = octokit.request.endpoint('GET /repos/:owner/:repo/releases/assets/:asset_id', {
         asset_id: id,
         headers: {
-            accept: 'application/octet-stream',
+            accept: 'application/octet-stream'
         },
         owner,
-        repo,
+        repo
     });
     let headers = {
         accept,
-        authorization: `token ${token}`,
+        authorization: `token ${token}`
     };
     if (typeof userAgent !== 'undefined')
         headers = Object.assign(Object.assign({}, headers), { 'user-agent': userAgent });
@@ -20738,22 +20740,24 @@ const baseFetchAssetFile = (octokit, { id, outputPath, owner, repo, token }) => 
     const blob = yield response.blob();
     const arrayBuffer = yield blob.arrayBuffer();
     core.info(`cwd ${process.cwd()}`);
-    outputPath = process.env['RUNNER_TOOL_CACHE'] + outputPath;
+    outputPath = `${process.env['RUNNER_TOOL_CACHE']}${outputPath}`;
     core.info(`Writing to ${outputPath}`);
     const path = yield (0, promises_1.mkdir)((0, path_1.dirname)(outputPath), { recursive: true });
     core.info(`path is ${path}`);
     yield (0, promises_1.writeFile)(outputPath, new Uint8Array(arrayBuffer));
 });
-const fetchAssetFile = (octokit, options) => (0, async_retry_1.default)(() => baseFetchAssetFile(octokit, options), {
-    retries: 5,
-    minTimeout: 1000,
+const fetchAssetFile = (octokit, options) => __awaiter(void 0, void 0, void 0, function* () {
+    return (0, async_retry_1.default)(() => __awaiter(void 0, void 0, void 0, function* () { return baseFetchAssetFile(octokit, options); }), {
+        retries: 5,
+        minTimeout: 1000
+    });
 });
 const printOutput = (release) => {
     core.info(`version: ${release.data.tag_name}`);
     core.info(`name: ${release.data.name}`);
 };
 const install = (target) => __awaiter(void 0, void 0, void 0, function* () {
-    target = process.env['RUNNER_TOOL_CACHE'] + target;
+    target = `${process.env['RUNNER_TOOL_CACHE']}${target}`;
     core.info(`target: ${target}`);
     const pathToCLI = yield tc.extractTar(target);
     core.info(`installed to ${pathToCLI}`);
@@ -20776,13 +20780,13 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     for (const asset of assets) {
         yield fetchAssetFile(octokit, {
             id: asset.id,
-            outputPath: '/' + target,
+            outputPath: `/${target}`,
             owner,
             repo,
-            token,
+            token
         });
     }
-    install('/' + target);
+    install(`/${target}`);
     printOutput(release);
 });
 void main();
