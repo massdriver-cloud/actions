@@ -9,144 +9,6 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 
 /***/ }),
 
-/***/ 3109:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-/* eslint-disable no-void */
-const promises_1 = __nccwpck_require__(9225);
-const path_1 = __nccwpck_require__(5622);
-const core = __importStar(__nccwpck_require__(2186));
-const github = __importStar(__nccwpck_require__(5438));
-const async_retry_1 = __importDefault(__nccwpck_require__(3415));
-const node_fetch_1 = __importDefault(__nccwpck_require__(6882));
-const tc = __importStar(__nccwpck_require__(7784));
-const getRelease = (octokit, { owner, repo, version }) => {
-    const tagsMatch = version.match(/^tags\/(.*)$/);
-    if (version === 'latest') {
-        return octokit.rest.repos.getLatestRelease({ owner, repo });
-    }
-    else if (tagsMatch !== null && tagsMatch[1]) {
-        return octokit.rest.repos.getReleaseByTag({
-            owner,
-            repo,
-            tag: tagsMatch[1],
-        });
-    }
-    else {
-        return octokit.rest.repos.getRelease({
-            owner,
-            repo,
-            release_id: Math.trunc(Number(version)),
-        });
-    }
-};
-const baseFetchAssetFile = (octokit, { id, outputPath, owner, repo, token }) => __awaiter(void 0, void 0, void 0, function* () {
-    const { body, headers: { accept, 'user-agent': userAgent }, method, url, } = octokit.request.endpoint('GET /repos/:owner/:repo/releases/assets/:asset_id', {
-        asset_id: id,
-        headers: {
-            accept: 'application/octet-stream',
-        },
-        owner,
-        repo,
-    });
-    let headers = {
-        accept,
-        authorization: `token ${token}`,
-    };
-    if (typeof userAgent !== 'undefined')
-        headers = Object.assign(Object.assign({}, headers), { 'user-agent': userAgent });
-    const response = yield (0, node_fetch_1.default)(url, { body, headers, method });
-    if (!response.ok) {
-        const text = yield response.text();
-        core.warning(text);
-        throw new Error('Invalid response');
-    }
-    const blob = yield response.blob();
-    const arrayBuffer = yield blob.arrayBuffer();
-    core.info(`Writing to ${outputPath}`);
-    const path = yield (0, promises_1.mkdir)((0, path_1.dirname)(outputPath), { recursive: true });
-    core.info(`path is ${path}`);
-    void (yield (0, promises_1.writeFile)(outputPath, new Uint8Array(arrayBuffer)));
-});
-const fetchAssetFile = (octokit, options) => (0, async_retry_1.default)(() => baseFetchAssetFile(octokit, options), {
-    retries: 5,
-    minTimeout: 1000,
-});
-const printOutput = (release) => {
-    core.info(`version: ${release.data.tag_name}`);
-    core.info(`name: ${release.data.name}`);
-};
-const install = (target) => __awaiter(void 0, void 0, void 0, function* () {
-    core.info(`target: ${target}`);
-    const pathToCLI = yield tc.extractZip(target);
-    core.info(`installed to ${pathToCLI}`);
-    core.addPath(pathToCLI);
-});
-const filterByFileName = (file) => (asset) => file === asset.name;
-const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    const owner = 'massdriver-cloud';
-    const repo = 'massdriver-cli';
-    const token = core.getInput('token', { required: false });
-    const version = core.getInput('version', { required: false });
-    const file = core.getInput('file', { required: true });
-    const target = file;
-    const octokit = github.getOctokit(token);
-    const release = yield getRelease(octokit, { owner, repo, version });
-    const assetFilterFn = filterByFileName(file);
-    const assets = release.data.assets.filter(assetFilterFn);
-    if (assets.length === 0)
-        throw new Error('Could not find asset id');
-    for (const asset of assets) {
-        yield fetchAssetFile(octokit, {
-            id: asset.id,
-            outputPath: target,
-            owner,
-            repo,
-            token,
-        });
-    }
-    install(target);
-    printOutput(release);
-});
-void main();
-
-
-/***/ }),
-
 /***/ 7351:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -20786,6 +20648,146 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 399:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+/* eslint-disable no-void */
+const core = __importStar(__nccwpck_require__(2186));
+const github = __importStar(__nccwpck_require__(5438));
+const tc = __importStar(__nccwpck_require__(7784));
+const async_retry_1 = __importDefault(__nccwpck_require__(3415));
+const promises_1 = __nccwpck_require__(9225);
+const node_fetch_1 = __importDefault(__nccwpck_require__(6882));
+const path_1 = __nccwpck_require__(5622);
+const getRelease = (octokit, { owner, repo, version }) => {
+    const tagsMatch = version.match(/^tags\/(.*)$/);
+    if (version === 'latest') {
+        return octokit.rest.repos.getLatestRelease({ owner, repo });
+    }
+    else if (tagsMatch !== null && tagsMatch[1]) {
+        // TODO: maybe here
+        return octokit.rest.repos.getReleaseByTag({
+            owner,
+            repo,
+            tag: tagsMatch[1],
+        });
+    }
+    else {
+        return octokit.rest.repos.getRelease({
+            owner,
+            repo,
+            release_id: Math.trunc(Number(version)),
+        });
+    }
+};
+const baseFetchAssetFile = (octokit, { id, outputPath, owner, repo, token }) => __awaiter(void 0, void 0, void 0, function* () {
+    const { body, headers: { accept, 'user-agent': userAgent }, method, url, } = octokit.request.endpoint('GET /repos/:owner/:repo/releases/assets/:asset_id', {
+        asset_id: id,
+        headers: {
+            accept: 'application/octet-stream',
+        },
+        owner,
+        repo,
+    });
+    let headers = {
+        accept,
+        authorization: `token ${token}`,
+    };
+    if (typeof userAgent !== 'undefined')
+        headers = Object.assign(Object.assign({}, headers), { 'user-agent': userAgent });
+    const response = yield (0, node_fetch_1.default)(url, { body, headers, method });
+    if (!response.ok) {
+        const text = yield response.text();
+        core.warning(text);
+        throw new Error('Invalid response');
+    }
+    const blob = yield response.blob();
+    const arrayBuffer = yield blob.arrayBuffer();
+    core.info(`cwd ${process.cwd()}`);
+    core.info(`Writing to ${outputPath}`);
+    const path = yield (0, promises_1.mkdir)((0, path_1.dirname)(outputPath), { recursive: true });
+    core.info(`path is ${path}`);
+    yield (0, promises_1.writeFile)(outputPath, new Uint8Array(arrayBuffer));
+});
+const fetchAssetFile = (octokit, options) => (0, async_retry_1.default)(() => baseFetchAssetFile(octokit, options), {
+    retries: 5,
+    minTimeout: 1000,
+});
+const printOutput = (release) => {
+    core.info(`version: ${release.data.tag_name}`);
+    core.info(`name: ${release.data.name}`);
+};
+const install = (target) => __awaiter(void 0, void 0, void 0, function* () {
+    core.info(`target: ${target}`);
+    const pathToCLI = yield tc.extractTar(target);
+    core.info(`installed to ${pathToCLI}`);
+    core.addPath(pathToCLI);
+});
+const filterByFileName = (file) => (asset) => file === asset.name;
+const main = () => __awaiter(void 0, void 0, void 0, function* () {
+    const owner = 'massdriver-cloud';
+    const repo = 'massdriver-cli';
+    const token = core.getInput('token', { required: false });
+    const version = core.getInput('version', { required: false });
+    const file = core.getInput('file', { required: true });
+    const target = file;
+    const octokit = github.getOctokit(token);
+    const release = yield getRelease(octokit, { owner, repo, version });
+    const assetFilterFn = filterByFileName(file);
+    const assets = release.data.assets.filter(assetFilterFn);
+    if (assets.length === 0)
+        throw new Error('Could not find asset id');
+    for (const asset of assets) {
+        yield fetchAssetFile(octokit, {
+            id: asset.id,
+            outputPath: '/' + target,
+            owner,
+            repo,
+            token,
+        });
+    }
+    install('/' + target);
+    printOutput(release);
+});
+void main();
+
+
+/***/ }),
+
 /***/ 2877:
 /***/ ((module) => {
 
@@ -21173,7 +21175,7 @@ module.exports = require("zlib");
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(3109);
+/******/ 	var __webpack_exports__ = __nccwpck_require__(399);
 /******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()
