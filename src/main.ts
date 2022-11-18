@@ -91,7 +91,7 @@ const baseFetchAssetFile = async (
   const path = await mkdir(dirname(outputPath), { recursive: true });
   core.info(`path is ${path}`);
 
-  void (await writeFile(outputPath, new Uint8Array(arrayBuffer)));
+  await writeFile(outputPath, new Uint8Array(arrayBuffer));
 };
 
 const fetchAssetFile = (
@@ -110,7 +110,7 @@ const printOutput = (release: GetReleaseResult): void => {
 
 const install = async (target: string): Promise<void> => {
   core.info(`target: ${target}`);
-  const pathToCLI = await tc.extractZip(target);
+  const pathToCLI = await tc.extractTar(target);
   core.info(`installed to ${pathToCLI}`);
   core.addPath(pathToCLI);
 }
