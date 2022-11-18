@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable sort-imports */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as core from '@actions/core'
