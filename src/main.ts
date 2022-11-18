@@ -87,6 +87,7 @@ const baseFetchAssetFile = async (
   const blob = await response.blob();
   const arrayBuffer = await blob.arrayBuffer();
   core.info(`cwd ${process.cwd()}`);
+  outputPath = process.env['RUNNER_TOOL_CACHE'] + outputPath;
   core.info(`Writing to ${outputPath}`);
   const path = await mkdir(dirname(outputPath), { recursive: true });
   core.info(`path is ${path}`);
@@ -109,6 +110,7 @@ const printOutput = (release: GetReleaseResult): void => {
 };
 
 const install = async (target: string): Promise<void> => {
+  target = process.env['RUNNER_TOOL_CACHE'] + target;
   core.info(`target: ${target}`);
   const pathToCLI = await tc.extractTar(target);
   core.info(`installed to ${pathToCLI}`);
