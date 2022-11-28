@@ -13,8 +13,11 @@ jobs:
       - uses: actions/checkout@v2
       - run: |
           npm install
+      # Put this back in when we have some tests
+      #- run: |
+      #    npm run all
       - run: |
-          npm run all --passWithNoTests
+          npm run build && npm run format && npm run lint
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
     steps:
