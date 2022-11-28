@@ -20685,15 +20685,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-/* eslint-disable sort-imports */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const tc = __importStar(__nccwpck_require__(7784));
-const async_retry_1 = __importDefault(__nccwpck_require__(3415));
-const promises_1 = __nccwpck_require__(9225);
 const node_fetch_1 = __importDefault(__nccwpck_require__(6882));
-const path_1 = __nccwpck_require__(5622);
+const fs_1 = __nccwpck_require__(5747);
+const async_retry_1 = __importDefault(__nccwpck_require__(3415));
 const getRelease = (octokit, { owner, repo, version }) => __awaiter(void 0, void 0, void 0, function* () {
     const tagsMatch = version.match(/^tags\/(.*)$/);
     if (version === 'latest') {
@@ -20738,12 +20736,9 @@ const baseFetchAssetFile = (octokit, { id, outputPath, owner, repo, token }) => 
     }
     const blob = yield response.blob();
     const arrayBuffer = yield blob.arrayBuffer();
-    core.info(`cwd ${process.cwd()}`);
+    // we download to the runner's tool cache, just like tc.downloadTool would do.
     outputPath = `${process.env['RUNNER_TOOL_CACHE']}${outputPath}`;
-    core.info(`Writing to ${outputPath}`);
-    const path = yield (0, promises_1.mkdir)((0, path_1.dirname)(outputPath), { recursive: true });
-    core.info(`path is ${path}`);
-    yield (0, promises_1.writeFile)(outputPath, new Uint8Array(arrayBuffer));
+    yield fs_1.promises.writeFile(outputPath, new Uint8Array(arrayBuffer));
 });
 const fetchAssetFile = (octokit, options) => __awaiter(void 0, void 0, void 0, function* () {
     return (0, async_retry_1.default)(() => __awaiter(void 0, void 0, void 0, function* () { return baseFetchAssetFile(octokit, options); }), {
@@ -20904,14 +20899,6 @@ module.exports = require("events");
 
 "use strict";
 module.exports = require("fs");
-
-/***/ }),
-
-/***/ 9225:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("fs/promises");
 
 /***/ }),
 

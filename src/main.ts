@@ -1,13 +1,11 @@
-/* eslint-disable sort-imports */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import * as tc from '@actions/tool-cache'
-import retry from 'async-retry'
-import { mkdir, writeFile } from 'fs/promises'
-import type { HeadersInit } from 'node-fetch'
+import type HeadersInit from 'node-fetch'
 import fetch from 'node-fetch'
-import { dirname } from 'path'
+import {promises as fs} from 'fs'
+import retry from 'async-retry'
 
 interface GetReleaseOptions {
   readonly owner: string
@@ -87,13 +85,10 @@ const baseFetchAssetFile = async (
   }
   const blob = await response.blob()
   const arrayBuffer = await blob.arrayBuffer()
-  core.info(`cwd ${process.cwd()}`)
+  // we download to the runner's tool cache, just like tc.downloadTool would do.
   outputPath = `${process.env['RUNNER_TOOL_CACHE']}${outputPath}`
-  core.info(`Writing to ${outputPath}`)
-  const path = await mkdir(dirname(outputPath), {recursive: true})
-  core.info(`path is ${path}`)
 
-  await writeFile(outputPath, new Uint8Array(arrayBuffer))
+  await fs.writeFile(outputPath, new Uint8Array(arrayBuffer))
 }
 
 const fetchAssetFile = async (
