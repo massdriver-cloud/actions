@@ -1,10 +1,18 @@
-name: 'Massdriver Setup Action'
+name: 'Setup Massdriver CLI'
 description: 'Sets up the Massdriver CLI'
+author: 'Massdriver, Inc.'
 inputs:
-  version: 
-    description: 'The version of the Massdriver CLI to download'
+  version:
+    description: 'The release version to fetch from in the form `tags/<tag_name>` or `<release_id>`.'
     required: false
     default: 'latest'
+  file:
+    description: 'The name of the file to be downloaded.'
+    required: true
+  token:
+    description: 'The GitHub token. Typically this will be secrets.GITHUB_TOKEN'
+    required: false
+    default: ${{ github.token }}
 runs:
   using: 'node16'
   main: 'dist/index.js'

@@ -1,5 +1,5 @@
-name: "units-test"
-on:
+name: 'build-test'
+on: # rebuild any PRs and main branch changes
   pull_request:
   push:
     branches:
@@ -7,19 +7,23 @@ on:
       - 'releases/*'
 
 jobs:
-  # unit tests
-  units:
+  build: # make sure build/ci work properly
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - run: npm ci
-    - run: npm test
+      - uses: actions/checkout@v2
+      - run: |
+          npm install
+      # Put this back in when we have some tests
+      #- run: |
+      #    npm run all
+      - run: |
+          npm run build && npm run format && npm run lint
+  test: # make sure the action works on a clean machine without building
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        with:
+          file: "mass-v0.4.8-linux-amd64.tar.gz"
+      - run: mass help
 
-  # test action works running from the graph
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: ./
-      with:
-        version: 'latest'
