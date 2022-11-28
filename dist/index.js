@@ -20692,7 +20692,9 @@ const tc = __importStar(__nccwpck_require__(7784));
 const node_fetch_1 = __importDefault(__nccwpck_require__(6882));
 const fs_1 = __nccwpck_require__(5747);
 const async_retry_1 = __importDefault(__nccwpck_require__(3415));
-const getRelease = (octokit, { owner, repo, version }) => __awaiter(void 0, void 0, void 0, function* () {
+const getRelease = (octokit, version) => __awaiter(void 0, void 0, void 0, function* () {
+    const owner = 'massdriver-cloud';
+    const repo = 'massdriver-cli';
     const tagsMatch = version.match(/^tags\/(.*)$/);
     if (version === 'latest') {
         return octokit.rest.repos.getLatestRelease({ owner, repo });
@@ -20766,7 +20768,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const file = core.getInput('file', { required: true });
     const target = file;
     const octokit = github.getOctokit(token);
-    const release = yield getRelease(octokit, { owner, repo, version });
+    const release = yield getRelease(octokit, version);
     const assetFilterFn = filterByFileName(file);
     const assets = release.data.assets.filter(assetFilterFn);
     if (assets.length === 0)

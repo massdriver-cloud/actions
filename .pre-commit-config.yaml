@@ -1,0 +1,19 @@
+fail_fast: false
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.2.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-json
+      - id: no-commit-to-branch
+        args: [-b, main]
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.28.0
+    hooks:
+      - id: eslint
+        files: \.[jt]sx?$ # *.js, *.jsx, *.ts and *.tsx
+        types: [file]
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v2.7.1
+    hooks:
+      - id: prettier

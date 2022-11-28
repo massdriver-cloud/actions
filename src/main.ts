@@ -7,16 +7,12 @@ import fetch from 'node-fetch'
 import {promises as fs} from 'fs'
 import retry from 'async-retry'
 
-interface GetReleaseOptions {
-  readonly owner: string
-  readonly repo: string
-  readonly version: string
-}
-
 const getRelease = async (
   octokit: ReturnType<typeof github.getOctokit>,
-  {owner, repo, version}: GetReleaseOptions
+  version: string
 ) => {
+  const owner = 'massdriver-cloud'
+  const repo = 'massdriver-cli'
   const tagsMatch = version.match(/^tags\/(.*)$/)
   if (version === 'latest') {
     return octokit.rest.repos.getLatestRelease({owner, repo})
@@ -124,7 +120,7 @@ const main = async (): Promise<void> => {
   const target = file
 
   const octokit = github.getOctokit(token)
-  const release = await getRelease(octokit, {owner, repo, version})
+  const release = await getRelease(octokit, version)
 
   const assetFilterFn = filterByFileName(file)
 
