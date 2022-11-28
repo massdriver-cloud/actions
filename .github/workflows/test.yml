@@ -22,4 +22,5 @@ jobs:
       - uses: ./
         with:
           file: "mass-v0.4.8-linux-amd64.tar.gz"
+      - run: mass help
 
