@@ -20739,7 +20739,7 @@ const baseFetchAssetFile = (octokit, { id, outputPath, owner, repo, token }) => 
     const blob = yield response.blob();
     const arrayBuffer = yield blob.arrayBuffer();
     core.info(`cwd ${process.cwd()}`);
-    outputPath = `${process.env['RUNNER_TOOL_CACHE']}${outputPath}`;
+    //outputPath = `${process.env['RUNNER_TOOL_CACHE']}${outputPath}`
     core.info(`Writing to ${outputPath}`);
     const path = yield (0, promises_1.mkdir)((0, path_1.dirname)(outputPath), { recursive: true });
     core.info(`path is ${path}`);
