@@ -20688,6 +20688,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
+const os = __importStar(__nccwpck_require__(2087));
 const tc = __importStar(__nccwpck_require__(7784));
 const node_fetch_1 = __importDefault(__nccwpck_require__(6882));
 const fs_1 = __nccwpck_require__(5747);
@@ -20767,6 +20768,13 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const version = core.getInput('version', { required: false });
     const file = core.getInput('file', { required: true });
     const target = file;
+    // we publish darwin and linux binaries
+    const osPlatform = os.platform();
+    // we publish arm64 and amd64 binaries
+    const osArch = os.arch();
+    // file names are of the form mass-$version-$platform-$arch.tar.gz
+    const fileName = `mass-${version}-${osPlatform}-${osArch}.tar.gz`;
+    core.info(`fileName: ${fileName}`);
     const octokit = github.getOctokit(token);
     const release = yield getRelease(octokit, version);
     const assetFilterFn = filterByFileName(file);

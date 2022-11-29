@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as core from '@actions/core'
 import * as github from '@actions/github'
+import * as os from 'os'
 import * as tc from '@actions/tool-cache'
 import type HeadersInit from 'node-fetch'
 import fetch from 'node-fetch'
@@ -118,6 +119,14 @@ const main = async (): Promise<void> => {
   const version = core.getInput('version', {required: false})
   const file = core.getInput('file', {required: true})
   const target = file
+
+  // we publish darwin and linux binaries
+  const osPlatform = os.platform()
+  // we publish arm64 and amd64 binaries
+  const osArch = os.arch()
+  // file names are of the form mass-$version-$platform-$arch.tar.gz
+  const fileName = `mass-${version}-${osPlatform}-${osArch}.tar.gz`
+  core.info(`fileName: ${fileName}`)
 
   const octokit = github.getOctokit(token)
   const release = await getRelease(octokit, version)
