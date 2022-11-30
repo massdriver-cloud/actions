@@ -82,8 +82,6 @@ const baseFetchAssetFile = async (
   }
   const blob = await response.blob()
   const arrayBuffer = await blob.arrayBuffer()
-  // we download to the runner's tool cache, just like tc.downloadTool would do.
-  outputPath = `${process.env['RUNNER_TOOL_CACHE']}${outputPath}`
 
   await fs.writeFile(outputPath, new Uint8Array(arrayBuffer))
 }
@@ -103,7 +101,6 @@ const printOutput = (release: GetReleaseResult): void => {
 }
 
 const install = async (target: string): Promise<void> => {
-  target = `${process.env['RUNNER_TOOL_CACHE']}${target}`
   core.info(`target: ${target}`)
   const pathToCLI = await tc.extractTar(target)
   core.info(`installed to ${pathToCLI}`)
@@ -126,16 +123,15 @@ const main = async (): Promise<void> => {
   const repo = 'massdriver-cli'
   const token = core.getInput('token', {required: false})
   const version = core.getInput('version', {required: false})
-  const file = core.getInput('file', {required: true})
-  const target = file
 
   // we publish darwin and linux binaries
   const osPlatform = os.platform()
   // we publish arm64 and amd64 binaries
   const osArch = determineArch()
   // file names are of the form mass-$version-$platform-$arch.tar.gz
-  const fileName = `mass-${version}-${osPlatform}-${osArch}.tar.gz`
-  core.info(`fileName: ${fileName}`)
+  const file = `mass-${version}-${osPlatform}-${osArch}.tar.gz`
+  const outputPath = `/${process.env['RUNNER_TOOL_CACHE']}${file}`
+  core.info(`target: ${file}`)
 
   const octokit = github.getOctokit(token)
   const release = await getRelease(octokit, version)
@@ -147,13 +143,13 @@ const main = async (): Promise<void> => {
   for (const asset of assets) {
     await fetchAssetFile(octokit, {
       id: asset.id,
-      outputPath: `/${target}`,
+      outputPath,
       owner,
       repo,
       token
     })
   }
-  install(`/${target}`)
+  install(outputPath)
   printOutput(release)
 }
 

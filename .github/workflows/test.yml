@@ -24,6 +24,5 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./
         with:
-          file: "mass-v0.4.8-linux-amd64.tar.gz"
+          version: 'v0.4.8'
       - run: mass help
-

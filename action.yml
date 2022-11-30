@@ -3,12 +3,9 @@ description: 'Sets up the Massdriver CLI'
 author: 'Massdriver, Inc.'
 inputs:
   version:
-    description: 'The release version to fetch from in the form `tags/<tag_name>` or `<release_id>`.'
+    description: 'The release version to fetch. Example: v0.4.8.'
     required: false
     default: 'latest'
-  file:
-    description: 'The name of the file to be downloaded.'
-    required: true
   token:
     description: 'The GitHub token. Typically this will be secrets.GITHUB_TOKEN'
     required: false

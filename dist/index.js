@@ -20739,8 +20739,6 @@ const baseFetchAssetFile = (octokit, { id, outputPath, owner, repo, token }) => 
     }
     const blob = yield response.blob();
     const arrayBuffer = yield blob.arrayBuffer();
-    // we download to the runner's tool cache, just like tc.downloadTool would do.
-    outputPath = `${process.env['RUNNER_TOOL_CACHE']}${outputPath}`;
     yield fs_1.promises.writeFile(outputPath, new Uint8Array(arrayBuffer));
 });
 const fetchAssetFile = (octokit, options) => __awaiter(void 0, void 0, void 0, function* () {
@@ -20754,7 +20752,6 @@ const printOutput = (release) => {
     core.info(`name: ${release.data.name}`);
 };
 const install = (target) => __awaiter(void 0, void 0, void 0, function* () {
-    target = `${process.env['RUNNER_TOOL_CACHE']}${target}`;
     core.info(`target: ${target}`);
     const pathToCLI = yield tc.extractTar(target);
     core.info(`installed to ${pathToCLI}`);
@@ -20774,15 +20771,14 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const repo = 'massdriver-cli';
     const token = core.getInput('token', { required: false });
     const version = core.getInput('version', { required: false });
-    const file = core.getInput('file', { required: true });
-    const target = file;
     // we publish darwin and linux binaries
     const osPlatform = os.platform();
     // we publish arm64 and amd64 binaries
     const osArch = determineArch();
     // file names are of the form mass-$version-$platform-$arch.tar.gz
-    const fileName = `mass-${version}-${osPlatform}-${osArch}.tar.gz`;
-    core.info(`fileName: ${fileName}`);
+    const file = `mass-${version}-${osPlatform}-${osArch}.tar.gz`;
+    const outputPath = `/${process.env['RUNNER_TOOL_CACHE']}${file}`;
+    core.info(`target: ${file}`);
     const octokit = github.getOctokit(token);
     const release = yield getRelease(octokit, version);
     const assetFilterFn = filterByFileName(file);
@@ -20792,13 +20788,13 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     for (const asset of assets) {
         yield fetchAssetFile(octokit, {
             id: asset.id,
-            outputPath: `/${target}`,
+            outputPath,
             owner,
             repo,
             token
         });
     }
-    install(`/${target}`);
+    install(outputPath);
     printOutput(release);
 });
 void main();
