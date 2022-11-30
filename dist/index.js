@@ -20761,6 +20761,14 @@ const install = (target) => __awaiter(void 0, void 0, void 0, function* () {
     core.addPath(pathToCLI);
 });
 const filterByFileName = (file) => (asset) => file === asset.name;
+const determineArch = () => {
+    const arch = os.arch();
+    core.info(`arch: ${arch}`);
+    const mappings = {
+        x64: 'amd64'
+    };
+    return mappings[arch] || arch;
+};
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const owner = 'massdriver-cloud';
     const repo = 'massdriver-cli';
@@ -20771,7 +20779,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     // we publish darwin and linux binaries
     const osPlatform = os.platform();
     // we publish arm64 and amd64 binaries
-    const osArch = os.arch();
+    const osArch = determineArch();
     // file names are of the form mass-$version-$platform-$arch.tar.gz
     const fileName = `mass-${version}-${osPlatform}-${osArch}.tar.gz`;
     core.info(`fileName: ${fileName}`);

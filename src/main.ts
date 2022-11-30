@@ -112,6 +112,15 @@ const install = async (target: string): Promise<void> => {
 
 const filterByFileName = (file: string) => (asset: Asset) => file === asset.name
 
+const determineArch = (): string => {
+  const arch: string = os.arch()
+  core.info(`arch: ${arch}`)
+  const mappings: {[key: string]: string} = {
+    x64: 'amd64'
+  }
+  return mappings[arch] || arch
+}
+
 const main = async (): Promise<void> => {
   const owner = 'massdriver-cloud'
   const repo = 'massdriver-cli'
@@ -123,7 +132,7 @@ const main = async (): Promise<void> => {
   // we publish darwin and linux binaries
   const osPlatform = os.platform()
   // we publish arm64 and amd64 binaries
-  const osArch = os.arch()
+  const osArch = determineArch()
   // file names are of the form mass-$version-$platform-$arch.tar.gz
   const fileName = `mass-${version}-${osPlatform}-${osArch}.tar.gz`
   core.info(`fileName: ${fileName}`)
