@@ -14,21 +14,13 @@ const getRelease = async (
 ) => {
   const owner = 'massdriver-cloud'
   const repo = 'massdriver-cli'
-  const tagsMatch = version.match(/^tags\/(.*)$/)
   if (version === 'latest') {
     return octokit.rest.repos.getLatestRelease({owner, repo})
-  } else if (tagsMatch !== null && tagsMatch[1]) {
-    // TODO: maybe here
+  } else {
     return octokit.rest.repos.getReleaseByTag({
       owner,
       repo,
-      tag: tagsMatch[1]
-    })
-  } else {
-    return octokit.rest.repos.getRelease({
-      owner,
-      repo,
-      release_id: Math.trunc(Number(version))
+      tag: version
     })
   }
 }
