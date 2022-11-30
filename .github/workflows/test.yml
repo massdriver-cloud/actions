@@ -20,9 +20,12 @@ jobs:
           npm run build && npm run format && npm run lint
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ['latest', 'v0.4.8']
     steps:
       - uses: actions/checkout@v2
       - uses: ./
         with:
-          version: 'v0.4.8'
+          version: ${{ matrix.version }}
       - run: mass help
