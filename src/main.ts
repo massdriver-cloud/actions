@@ -10,17 +10,17 @@ import retry from 'async-retry'
 
 const getRelease = async (
   octokit: ReturnType<typeof github.getOctokit>,
-  version: string
+  tag: string
 ) => {
   const owner = 'massdriver-cloud'
   const repo = 'massdriver-cli'
-  if (version === 'latest') {
+  if (tag === 'latest') {
     return octokit.rest.repos.getLatestRelease({owner, repo})
   } else {
     return octokit.rest.repos.getReleaseByTag({
       owner,
       repo,
-      tag: version
+      tag
     })
   }
 }
@@ -122,12 +122,12 @@ const main = async (): Promise<void> => {
   const owner = 'massdriver-cloud'
   const repo = 'massdriver-cli'
   const token = core.getInput('token', {required: false})
-  const version = core.getInput('version', {required: false})
+  let tag = core.getInput('tag', {required: false})
 
   const octokit = github.getOctokit(token)
-  const release = await getRelease(octokit, version)
+  const release = await getRelease(octokit, tag)
 
-  const tag = version === 'latest' ? release.data.tag_name : version
+  tag = tag === 'latest' ? release.data.tag_name : tag
   const file = determineFile(tag)
   const outputPath = `/${process.env['RUNNER_TOOL_CACHE']}${file}`
   const assetFilterFn = filterByFileName(file)

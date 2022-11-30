@@ -20693,17 +20693,17 @@ const tc = __importStar(__nccwpck_require__(7784));
 const node_fetch_1 = __importDefault(__nccwpck_require__(6882));
 const fs_1 = __nccwpck_require__(5747);
 const async_retry_1 = __importDefault(__nccwpck_require__(3415));
-const getRelease = (octokit, version) => __awaiter(void 0, void 0, void 0, function* () {
+const getRelease = (octokit, tag) => __awaiter(void 0, void 0, void 0, function* () {
     const owner = 'massdriver-cloud';
     const repo = 'massdriver-cli';
-    if (version === 'latest') {
+    if (tag === 'latest') {
         return octokit.rest.repos.getLatestRelease({ owner, repo });
     }
     else {
         return octokit.rest.repos.getReleaseByTag({
             owner,
             repo,
-            tag: version
+            tag
         });
     }
 });
@@ -20768,10 +20768,10 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const owner = 'massdriver-cloud';
     const repo = 'massdriver-cli';
     const token = core.getInput('token', { required: false });
-    const version = core.getInput('version', { required: false });
+    let tag = core.getInput('tag', { required: false });
     const octokit = github.getOctokit(token);
-    const release = yield getRelease(octokit, version);
-    const tag = version === 'latest' ? release.data.tag_name : version;
+    const release = yield getRelease(octokit, tag);
+    tag = tag === 'latest' ? release.data.tag_name : tag;
     const file = determineFile(tag);
     const outputPath = `/${process.env['RUNNER_TOOL_CACHE']}${file}`;
     const assetFilterFn = filterByFileName(file);
