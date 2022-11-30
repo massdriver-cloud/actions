@@ -116,20 +116,17 @@ const main = async (): Promise<void> => {
   const token = core.getInput('token', {required: false})
   const version = core.getInput('version', {required: false})
 
+  const octokit = github.getOctokit(token)
+  const release = await getRelease(octokit, version)
+  core.info(`release: ${JSON.stringify(release)}`)
+
   // we publish darwin and linux binaries
   const osPlatform = os.platform()
   // we publish arm64 and amd64 binaries
   const osArch = determineArch()
-  // file names are of the form mass-$version-$platform-$arch.tar.gz
   const file = `mass-${version}-${osPlatform}-${osArch}.tar.gz`
   const outputPath = `/${process.env['RUNNER_TOOL_CACHE']}${file}`
-  core.info(`target: ${file}`)
-
-  const octokit = github.getOctokit(token)
-  const release = await getRelease(octokit, version)
-
   const assetFilterFn = filterByFileName(file)
-
   const assets = release.data.assets.filter(assetFilterFn)
   if (assets.length === 0) throw new Error('Could not find asset id')
   for (const asset of assets) {
