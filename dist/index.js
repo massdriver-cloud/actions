@@ -20688,30 +20688,22 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
+const os = __importStar(__nccwpck_require__(2087));
 const tc = __importStar(__nccwpck_require__(7784));
 const node_fetch_1 = __importDefault(__nccwpck_require__(6882));
 const fs_1 = __nccwpck_require__(5747);
 const async_retry_1 = __importDefault(__nccwpck_require__(3415));
-const getRelease = (octokit, version) => __awaiter(void 0, void 0, void 0, function* () {
+const getRelease = (octokit, tag) => __awaiter(void 0, void 0, void 0, function* () {
     const owner = 'massdriver-cloud';
     const repo = 'massdriver-cli';
-    const tagsMatch = version.match(/^tags\/(.*)$/);
-    if (version === 'latest') {
+    if (tag === 'latest') {
         return octokit.rest.repos.getLatestRelease({ owner, repo });
     }
-    else if (tagsMatch !== null && tagsMatch[1]) {
-        // TODO: maybe here
+    else {
         return octokit.rest.repos.getReleaseByTag({
             owner,
             repo,
-            tag: tagsMatch[1]
-        });
-    }
-    else {
-        return octokit.rest.repos.getRelease({
-            owner,
-            repo,
-            release_id: Math.trunc(Number(version))
+            tag
         });
     }
 });
@@ -20738,8 +20730,6 @@ const baseFetchAssetFile = (octokit, { id, outputPath, owner, repo, token }) => 
     }
     const blob = yield response.blob();
     const arrayBuffer = yield blob.arrayBuffer();
-    // we download to the runner's tool cache, just like tc.downloadTool would do.
-    outputPath = `${process.env['RUNNER_TOOL_CACHE']}${outputPath}`;
     yield fs_1.promises.writeFile(outputPath, new Uint8Array(arrayBuffer));
 });
 const fetchAssetFile = (octokit, options) => __awaiter(void 0, void 0, void 0, function* () {
@@ -20753,22 +20743,37 @@ const printOutput = (release) => {
     core.info(`name: ${release.data.name}`);
 };
 const install = (target) => __awaiter(void 0, void 0, void 0, function* () {
-    target = `${process.env['RUNNER_TOOL_CACHE']}${target}`;
     core.info(`target: ${target}`);
     const pathToCLI = yield tc.extractTar(target);
     core.info(`installed to ${pathToCLI}`);
     core.addPath(pathToCLI);
 });
 const filterByFileName = (file) => (asset) => file === asset.name;
+const determineArch = () => {
+    const arch = os.arch();
+    core.info(`arch: ${arch}`);
+    const mappings = {
+        x64: 'amd64'
+    };
+    return mappings[arch] || arch;
+};
+const determineFile = (tag) => {
+    // we publish darwin and linux binaries
+    const osPlatform = os.platform();
+    // we publish arm64 and amd64 binaries
+    const osArch = determineArch();
+    return `mass-${tag}-${osPlatform}-${osArch}.tar.gz`;
+};
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const owner = 'massdriver-cloud';
     const repo = 'massdriver-cli';
     const token = core.getInput('token', { required: false });
-    const version = core.getInput('version', { required: false });
-    const file = core.getInput('file', { required: true });
-    const target = file;
+    let tag = core.getInput('tag', { required: false });
     const octokit = github.getOctokit(token);
-    const release = yield getRelease(octokit, version);
+    const release = yield getRelease(octokit, tag);
+    tag = tag === 'latest' ? release.data.tag_name : tag;
+    const file = determineFile(tag);
+    const outputPath = `/${process.env['RUNNER_TOOL_CACHE']}${file}`;
     const assetFilterFn = filterByFileName(file);
     const assets = release.data.assets.filter(assetFilterFn);
     if (assets.length === 0)
@@ -20776,13 +20781,13 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     for (const asset of assets) {
         yield fetchAssetFile(octokit, {
             id: asset.id,
-            outputPath: `/${target}`,
+            outputPath,
             owner,
             repo,
             token
         });
     }
-    install(`/${target}`);
+    install(outputPath);
     printOutput(release);
 });
 void main();

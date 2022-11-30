@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as core from '@actions/core'
 import * as github from '@actions/github'
+import * as os from 'os'
 import * as tc from '@actions/tool-cache'
 import type HeadersInit from 'node-fetch'
 import fetch from 'node-fetch'
@@ -9,25 +10,17 @@ import retry from 'async-retry'
 
 const getRelease = async (
   octokit: ReturnType<typeof github.getOctokit>,
-  version: string
+  tag: string
 ) => {
   const owner = 'massdriver-cloud'
   const repo = 'massdriver-cli'
-  const tagsMatch = version.match(/^tags\/(.*)$/)
-  if (version === 'latest') {
+  if (tag === 'latest') {
     return octokit.rest.repos.getLatestRelease({owner, repo})
-  } else if (tagsMatch !== null && tagsMatch[1]) {
-    // TODO: maybe here
+  } else {
     return octokit.rest.repos.getReleaseByTag({
       owner,
       repo,
-      tag: tagsMatch[1]
-    })
-  } else {
-    return octokit.rest.repos.getRelease({
-      owner,
-      repo,
-      release_id: Math.trunc(Number(version))
+      tag
     })
   }
 }
@@ -81,8 +74,6 @@ const baseFetchAssetFile = async (
   }
   const blob = await response.blob()
   const arrayBuffer = await blob.arrayBuffer()
-  // we download to the runner's tool cache, just like tc.downloadTool would do.
-  outputPath = `${process.env['RUNNER_TOOL_CACHE']}${outputPath}`
 
   await fs.writeFile(outputPath, new Uint8Array(arrayBuffer))
 }
@@ -102,7 +93,6 @@ const printOutput = (release: GetReleaseResult): void => {
 }
 
 const install = async (target: string): Promise<void> => {
-  target = `${process.env['RUNNER_TOOL_CACHE']}${target}`
   core.info(`target: ${target}`)
   const pathToCLI = await tc.extractTar(target)
   core.info(`installed to ${pathToCLI}`)
@@ -111,31 +101,48 @@ const install = async (target: string): Promise<void> => {
 
 const filterByFileName = (file: string) => (asset: Asset) => file === asset.name
 
+const determineArch = (): string => {
+  const arch: string = os.arch()
+  core.info(`arch: ${arch}`)
+  const mappings: {[key: string]: string} = {
+    x64: 'amd64'
+  }
+  return mappings[arch] || arch
+}
+
+const determineFile = (tag: string): string => {
+  // we publish darwin and linux binaries
+  const osPlatform = os.platform()
+  // we publish arm64 and amd64 binaries
+  const osArch = determineArch()
+  return `mass-${tag}-${osPlatform}-${osArch}.tar.gz`
+}
+
 const main = async (): Promise<void> => {
   const owner = 'massdriver-cloud'
   const repo = 'massdriver-cli'
   const token = core.getInput('token', {required: false})
-  const version = core.getInput('version', {required: false})
-  const file = core.getInput('file', {required: true})
-  const target = file
+  let tag = core.getInput('tag', {required: false})
 
   const octokit = github.getOctokit(token)
-  const release = await getRelease(octokit, version)
+  const release = await getRelease(octokit, tag)
 
+  tag = tag === 'latest' ? release.data.tag_name : tag
+  const file = determineFile(tag)
+  const outputPath = `/${process.env['RUNNER_TOOL_CACHE']}${file}`
   const assetFilterFn = filterByFileName(file)
-
   const assets = release.data.assets.filter(assetFilterFn)
   if (assets.length === 0) throw new Error('Could not find asset id')
   for (const asset of assets) {
     await fetchAssetFile(octokit, {
       id: asset.id,
-      outputPath: `/${target}`,
+      outputPath,
       owner,
       repo,
       token
     })
   }
-  install(`/${target}`)
+  install(outputPath)
   printOutput(release)
 }
 

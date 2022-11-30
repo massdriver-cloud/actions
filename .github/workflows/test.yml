@@ -20,10 +20,12 @@ jobs:
           npm run build && npm run format && npm run lint
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ['latest', 'v0.4.8']
     steps:
       - uses: actions/checkout@v2
       - uses: ./
         with:
-          file: "mass-v0.4.8-linux-amd64.tar.gz"
+          tag: ${{ matrix.version }}
       - run: mass help
-
