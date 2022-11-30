@@ -20757,6 +20757,13 @@ const determineArch = () => {
     };
     return mappings[arch] || arch;
 };
+const determineFile = (tag) => {
+    // we publish darwin and linux binaries
+    const osPlatform = os.platform();
+    // we publish arm64 and amd64 binaries
+    const osArch = determineArch();
+    return `mass-${tag}-${osPlatform}-${osArch}.tar.gz`;
+};
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const owner = 'massdriver-cloud';
     const repo = 'massdriver-cli';
@@ -20764,12 +20771,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const version = core.getInput('version', { required: false });
     const octokit = github.getOctokit(token);
     const release = yield getRelease(octokit, version);
-    core.info(`release: ${JSON.stringify(release)}`);
-    // we publish darwin and linux binaries
-    const osPlatform = os.platform();
-    // we publish arm64 and amd64 binaries
-    const osArch = determineArch();
-    const file = `mass-${version}-${osPlatform}-${osArch}.tar.gz`;
+    const tag = version === 'latest' ? release.data.tag_name : version;
+    const file = determineFile(tag);
     const outputPath = `/${process.env['RUNNER_TOOL_CACHE']}${file}`;
     const assetFilterFn = filterByFileName(file);
     const assets = release.data.assets.filter(assetFilterFn);
