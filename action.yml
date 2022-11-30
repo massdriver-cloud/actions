@@ -2,12 +2,15 @@ name: 'Setup Massdriver CLI'
 description: 'Sets up the Massdriver CLI'
 author: 'Massdriver, Inc.'
 inputs:
-  version:
-    description: 'The release version to fetch. Example: v0.4.8.'
+  tag:
+    description: |
+      The release tag to fetch. Can be either a tag like `v0.4.8` or `latest`.
+      Releases can be found at https://github.com/massdriver-cloud/massdriver-cli.
     required: false
     default: 'latest'
   token:
-    description: 'The GitHub token. Typically this will be secrets.GITHUB_TOKEN'
+    description: |
+      The GitHub token used to fetch a release. This is set by GitHub Actions.'
     required: false
     default: ${{ github.token }}
 runs:
