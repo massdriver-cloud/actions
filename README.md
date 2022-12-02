@@ -1,6 +1,10 @@
-# Massdriver GitHub Action
+# Massdriver GitHub Actions
 
-Use this GitHub action to set up the Massdriver CLI for your workflows.
+A collection of GitHub Actions for interacting with [Massdriver](https://massdriver.cloud).
+
+## Setup
+
+Use this action to set up the Massdriver CLI for use in your workflows:
 
 ```yaml
 jobs:
@@ -8,7 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions
+        uses: massdriver-cloud/actions/setup@v2
       - name: Use Massdriver CLI
         run: mass help
 ```
+
+This will download the latest version of the Massdriver CLI. Optionally, a `tag` may be specified to install a specific [tagged release](https://github.com/massdriver-cloud/massdriver-cli/releases):
+
+```yaml
+- name: Install Massdriver CLI
+  uses: massdriver-cloud/actions/setup@v2
+  with:
+    tag: v0.4.8
+```
+
+This action currently supports Linux x64 runners.
