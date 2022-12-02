@@ -18045,14 +18045,8 @@ const fetchAssetFile = (octokit, options) => __awaiter(void 0, void 0, void 0, f
         minTimeout: 1000
     });
 });
-const printOutput = (release) => {
-    core.info(`version: ${release.data.tag_name}`);
-    core.info(`name: ${release.data.name}`);
-};
 const install = (target) => __awaiter(void 0, void 0, void 0, function* () {
-    core.info(`target: ${target}`);
     const pathToCLI = yield tc.extractTar(target);
-    core.info(`installed to ${pathToCLI}`);
     core.addPath(pathToCLI);
 });
 const filterByFileName = (file) => (asset) => file === asset.name;
@@ -18095,7 +18089,6 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
     install(outputPath);
-    printOutput(release);
 });
 void main();
 

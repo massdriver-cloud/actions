@@ -87,15 +87,8 @@ const fetchAssetFile = async (
     minTimeout: 1000
   })
 
-const printOutput = (release: GetReleaseResult): void => {
-  core.info(`version: ${release.data.tag_name}`)
-  core.info(`name: ${release.data.name}`)
-}
-
 const install = async (target: string): Promise<void> => {
-  core.info(`target: ${target}`)
   const pathToCLI = await tc.extractTar(target)
-  core.info(`installed to ${pathToCLI}`)
   core.addPath(pathToCLI)
 }
 
@@ -143,7 +136,6 @@ const main = async (): Promise<void> => {
     })
   }
   install(outputPath)
-  printOutput(release)
 }
 
 void main()
