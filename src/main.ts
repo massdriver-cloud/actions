@@ -96,7 +96,6 @@ const filterByFileName = (file: string) => (asset: Asset) => file === asset.name
 
 const determineArch = (): string => {
   const arch: string = os.arch()
-  core.info(`arch: ${arch}`)
   const mappings: {[key: string]: string} = {
     x64: 'amd64'
   }
@@ -122,7 +121,7 @@ const main = async (): Promise<void> => {
 
   tag = tag === 'latest' ? release.data.tag_name : tag
   const file = determineFile(tag)
-  const outputPath = `/${process.env['RUNNER_TOOL_CACHE']}${file}`
+  const outputPath = `${process.env['RUNNER_TOOL_CACHE']}/${file}`
   const assetFilterFn = filterByFileName(file)
   const assets = release.data.assets.filter(assetFilterFn)
   if (assets.length === 0) throw new Error('Could not find asset id')

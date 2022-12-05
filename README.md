@@ -26,4 +26,4 @@ This will download the latest version of the Massdriver CLI. Optionally, a `tag`
     tag: v0.4.8
 ```
 
-This action currently supports Linux x64 runners.
+We test this action against `ubuntu-latest` and `macos-latest` GitHub runners. If you need to use this action on a different runner, please [open an issue](https://github.com/massdriver-cloud/actions/issues/new).

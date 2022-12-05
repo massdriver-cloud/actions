@@ -18052,7 +18052,6 @@ const install = (target) => __awaiter(void 0, void 0, void 0, function* () {
 const filterByFileName = (file) => (asset) => file === asset.name;
 const determineArch = () => {
     const arch = os.arch();
-    core.info(`arch: ${arch}`);
     const mappings = {
         x64: 'amd64'
     };
@@ -18074,7 +18073,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const release = yield getRelease(octokit, tag);
     tag = tag === 'latest' ? release.data.tag_name : tag;
     const file = determineFile(tag);
-    const outputPath = `/${process.env['RUNNER_TOOL_CACHE']}${file}`;
+    const outputPath = `${process.env['RUNNER_TOOL_CACHE']}/${file}`;
     const assetFilterFn = filterByFileName(file);
     const assets = release.data.assets.filter(assetFilterFn);
     if (assets.length === 0)
