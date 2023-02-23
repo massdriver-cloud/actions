@@ -10,14 +10,14 @@ jobs:
   build: # make sure build/ci work properly
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: |
-          npm install
+          yarn install --frozen-lockfile
       # Put this back in when we have some tests
       #- run: |
       #    npm run all
       - run: |
-          npm run build && npm run format && npm run lint
+          yarn run build && yarn run format && yarn run lint
   test: # make sure the action works on a clean machine without building
     strategy:
       matrix:
@@ -25,7 +25,11 @@ jobs:
         runner: ['ubuntu-latest', 'macos-latest']
     runs-on: ${{ matrix.runner}}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - name: Set Node.js 18.x
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 18.x
       - uses: ./setup
         with:
           tag: ${{ matrix.version }}
