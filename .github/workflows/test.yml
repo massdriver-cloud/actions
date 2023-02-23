@@ -12,7 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-          npm install
+          if [ -e yarn.lock ]; then
+          yarn install --frozen-lockfile
+          else
+          npm i
+          fi
       # Put this back in when we have some tests
       #- run: |
       #    npm run all
