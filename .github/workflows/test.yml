@@ -12,16 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-          if [ -e yarn.lock ]; then
           yarn install --frozen-lockfile
-          else
-          npm i
-          fi
       # Put this back in when we have some tests
       #- run: |
       #    npm run all
       - run: |
-          npm run build && npm run format && npm run lint
+          yarn run build && yarn run format && yarn run lint
   test: # make sure the action works on a clean machine without building
     strategy:
       matrix:

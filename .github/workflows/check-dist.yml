@@ -30,18 +30,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          if [ -e yarn.lock ]; then
           yarn install --frozen-lockfile
-          elif [ -e package-lock.json ]; then
-          npm ci
-          else
-          npm i
-          fi
 
       - name: Rebuild the dist/ directory
         run: |
-          npm run build
-          npm run package
+          yarn run build
+          yarn run package
 
       - name: Compare the expected and actual dist/ directories
         run: |
