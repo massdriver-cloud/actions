@@ -1,0 +1,19 @@
+name: 'Deploy Application'
+description: 'Deploy a Massdriver application'
+author: 'Massdriver, Inc.'
+inputs:
+  tag:
+    description: |
+      The the container image tag to use for the application.
+    required: true
+  package_id:
+    description: |
+      The Massdriver package ID.
+    required: true
+  params_filepath:
+    description: |
+      The params file used in `mass app deploy <package_id> -f <params_filepath.json|yaml> -t <tag>`
+    required: true
+runs:
+  using: 'node18'
+  main: '../dist/index.js'
