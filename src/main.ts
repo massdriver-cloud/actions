@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import * as os from 'os'
 import * as tc from '@actions/tool-cache'
-import type HeadersInit from 'node-fetch'
-import fetch from 'node-fetch'
-import {promises as fs} from 'fs'
 import retry from 'async-retry'
+import {promises as fs} from 'fs'
+import fetch from 'node-fetch'
+import * as os from 'os'
+import {applicationDeploy, ApplicationDeployIFace} from './application-deploy'
 
 const getRelease = async (
   octokit: ReturnType<typeof github.getOctokit>,
@@ -59,7 +59,7 @@ const baseFetchAssetFile = async (
       repo
     }
   )
-  let headers: HeadersInit = {
+  let headers: Record<string, string> = {
     accept,
     authorization: `token ${token}`
   }
@@ -115,6 +115,20 @@ const main = async (): Promise<void> => {
   const repo = 'massdriver-cli'
   const token = core.getInput('token', {required: false})
   let tag = core.getInput('tag', {required: false})
+
+  // conditinals in the `main` method, is this how GH actions work?
+  if (tag === 'biz') {
+    const package_id = core.getInput('package_id', {required: false})
+    const params_filepath = core.getInput('params_filepath', {required: false})
+
+    // breaking some JS variable naming conventions to use object shorthand
+    const deploy: ApplicationDeployIFace = {
+      tag,
+      package_id,
+      params_filepath
+    }
+    applicationDeploy(deploy)
+  }
 
   const octokit = github.getOctokit(token)
   const release = await getRelease(octokit, tag)
