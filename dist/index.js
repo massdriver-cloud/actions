@@ -18041,6 +18041,45 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 6694:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.applicationDeploy = void 0;
+const core_1 = __importDefault(__nccwpck_require__(2186));
+const exec_1 = __importDefault(__nccwpck_require__(1514));
+const applicationDeploy = (deploy) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const command = `mass application deploy ${deploy.package_id} -f ${deploy.params_filepath} -t ${deploy.tag}`;
+        core_1.default.debug(`command: ${command}`);
+        yield exec_1.default.exec(command);
+        // "must be set to any or unkown if specified"
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }
+    catch (error) {
+        core_1.default.setFailed(error.message);
+    }
+    return;
+});
+exports.applicationDeploy = applicationDeploy;
+
+
+/***/ }),
+
 /***/ 399:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -18085,11 +18124,12 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
-const os = __importStar(__nccwpck_require__(2037));
 const tc = __importStar(__nccwpck_require__(7784));
-const node_fetch_1 = __importDefault(__nccwpck_require__(4429));
-const fs_1 = __nccwpck_require__(7147);
 const async_retry_1 = __importDefault(__nccwpck_require__(3415));
+const fs_1 = __nccwpck_require__(7147);
+const node_fetch_1 = __importDefault(__nccwpck_require__(4429));
+const os = __importStar(__nccwpck_require__(2037));
+const application_deploy_1 = __nccwpck_require__(6694);
 const getRelease = (octokit, tag) => __awaiter(void 0, void 0, void 0, function* () {
     const owner = 'massdriver-cloud';
     const repo = 'massdriver-cli';
@@ -18159,6 +18199,18 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const repo = 'massdriver-cli';
     const token = core.getInput('token', { required: false });
     let tag = core.getInput('tag', { required: false });
+    // conditinals in the `main` method, is this how GH actions work?
+    if (tag === 'biz') {
+        const package_id = core.getInput('package_id', { required: false });
+        const params_filepath = core.getInput('params_filepath', { required: false });
+        // breaking some JS variable naming conventions to use object shorthand
+        const deploy = {
+            tag,
+            package_id,
+            params_filepath
+        };
+        (0, application_deploy_1.applicationDeploy)(deploy);
+    }
     const octokit = github.getOctokit(token);
     const release = yield getRelease(octokit, tag);
     tag = tag === 'latest' ? release.data.tag_name : tag;
