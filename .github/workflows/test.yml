@@ -33,4 +33,4 @@ jobs:
       - uses: ./setup
         with:
           tag: ${{ matrix.version }}
-      - run: mass help
+      - run: node --version

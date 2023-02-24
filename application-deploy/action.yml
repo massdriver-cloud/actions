@@ -15,5 +15,5 @@ inputs:
       The params file used in `mass app deploy <package_id> -f <params_filepath.json|yaml> -t <tag>`
     required: true
 runs:
-  using: 'node18'
+  using: 'node16'
   main: '../dist/index.js'
