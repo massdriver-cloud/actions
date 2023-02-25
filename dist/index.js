@@ -18041,7 +18041,153 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 6535:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.setupAction = void 0;
+const setup_1 = __importDefault(__nccwpck_require__(4190));
+exports.setupAction = setup_1.default;
+
+
+/***/ }),
+
+/***/ 4190:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+const core = __importStar(__nccwpck_require__(2186));
+const github = __importStar(__nccwpck_require__(5438));
+const tc = __importStar(__nccwpck_require__(7784));
+const index_1 = __nccwpck_require__(6252);
+const install = (target) => __awaiter(void 0, void 0, void 0, function* () {
+    const pathToCLI = yield tc.extractTar(target);
+    core.addPath(pathToCLI);
+});
+const setupAction = (opts) => __awaiter(void 0, void 0, void 0, function* () {
+    const owner = 'massdriver-cloud';
+    const repo = 'massdriver-cli';
+    let { tag } = opts;
+    const octokit = github.getOctokit(opts.token);
+    const release = yield (0, index_1.getRelease)(octokit, tag, owner, repo);
+    tag = tag === 'latest' ? release.data.tag_name : tag;
+    const file = (0, index_1.determineFile)(tag);
+    const outputPath = `${process.env['RUNNER_TOOL_CACHE']}/${file}`;
+    const assetFilterFn = (0, index_1.filterByFileName)(file);
+    const assets = release.data.assets.filter(assetFilterFn);
+    if (assets.length === 0)
+        throw new Error('Could not find asset id');
+    for (const asset of assets) {
+        yield (0, index_1.fetchAssetFile)(octokit, {
+            id: asset.id,
+            outputPath,
+            owner,
+            repo,
+            token: opts.token
+        });
+    }
+    install(outputPath);
+});
+exports["default"] = setupAction;
+
+
+/***/ }),
+
 /***/ 399:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core = __importStar(__nccwpck_require__(2186));
+const actions_1 = __nccwpck_require__(6535);
+const main = () => __awaiter(void 0, void 0, void 0, function* () {
+    const token = core.getInput('token', { required: false });
+    const tag = core.getInput('tag', { required: false });
+    const opts = {
+        tag,
+        token
+    };
+    (0, actions_1.setupAction)(opts);
+});
+void main();
+
+
+/***/ }),
+
+/***/ 6930:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -18084,26 +18230,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 const core = __importStar(__nccwpck_require__(2186));
-const github = __importStar(__nccwpck_require__(5438));
-const os = __importStar(__nccwpck_require__(2037));
-const tc = __importStar(__nccwpck_require__(7784));
-const node_fetch_1 = __importDefault(__nccwpck_require__(4429));
-const fs_1 = __nccwpck_require__(7147);
 const async_retry_1 = __importDefault(__nccwpck_require__(3415));
-const getRelease = (octokit, tag) => __awaiter(void 0, void 0, void 0, function* () {
-    const owner = 'massdriver-cloud';
-    const repo = 'massdriver-cli';
-    if (tag === 'latest') {
-        return octokit.rest.repos.getLatestRelease({ owner, repo });
-    }
-    else {
-        return octokit.rest.repos.getReleaseByTag({
-            owner,
-            repo,
-            tag
-        });
-    }
-});
+const fs_1 = __nccwpck_require__(7147);
+const node_fetch_1 = __importDefault(__nccwpck_require__(4429));
 const baseFetchAssetFile = (octokit, { id, outputPath, owner, repo, token }) => __awaiter(void 0, void 0, void 0, function* () {
     const { body, headers: { accept, 'user-agent': userAgent }, method, url } = octokit.request.endpoint('GET /repos/:owner/:repo/releases/assets/:asset_id', {
         asset_id: id,
@@ -18135,11 +18264,82 @@ const fetchAssetFile = (octokit, options) => __awaiter(void 0, void 0, void 0, f
         minTimeout: 1000
     });
 });
-const install = (target) => __awaiter(void 0, void 0, void 0, function* () {
-    const pathToCLI = yield tc.extractTar(target);
-    core.addPath(pathToCLI);
+exports["default"] = fetchAssetFile;
+
+
+/***/ }),
+
+/***/ 6872:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getRelease = void 0;
+const getRelease = (octokit, tag, owner, repo) => __awaiter(void 0, void 0, void 0, function* () {
+    if (tag === 'latest') {
+        return octokit.rest.repos.getLatestRelease({ owner, repo });
+    }
+    else {
+        return octokit.rest.repos.getReleaseByTag({
+            owner,
+            repo,
+            tag
+        });
+    }
 });
-const filterByFileName = (file) => (asset) => file === asset.name;
+exports.getRelease = getRelease;
+
+
+/***/ }),
+
+/***/ 6252:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getRelease = exports.fetchAssetFile = exports.filterByFileName = exports.determineFile = exports.determineArch = void 0;
+const os = __importStar(__nccwpck_require__(2037));
+const fetch_asset_1 = __importDefault(__nccwpck_require__(6930));
+exports.fetchAssetFile = fetch_asset_1.default;
+const get_release_1 = __nccwpck_require__(6872);
+Object.defineProperty(exports, "getRelease", ({ enumerable: true, get: function () { return get_release_1.getRelease; } }));
 const determineArch = () => {
     const arch = os.arch();
     const mappings = {
@@ -18147,6 +18347,7 @@ const determineArch = () => {
     };
     return mappings[arch] || arch;
 };
+exports.determineArch = determineArch;
 const determineFile = (tag) => {
     // we publish darwin and linux binaries
     const osPlatform = os.platform();
@@ -18154,32 +18355,9 @@ const determineFile = (tag) => {
     const osArch = determineArch();
     return `mass-${tag}-${osPlatform}-${osArch}.tar.gz`;
 };
-const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    const owner = 'massdriver-cloud';
-    const repo = 'massdriver-cli';
-    const token = core.getInput('token', { required: false });
-    let tag = core.getInput('tag', { required: false });
-    const octokit = github.getOctokit(token);
-    const release = yield getRelease(octokit, tag);
-    tag = tag === 'latest' ? release.data.tag_name : tag;
-    const file = determineFile(tag);
-    const outputPath = `${process.env['RUNNER_TOOL_CACHE']}/${file}`;
-    const assetFilterFn = filterByFileName(file);
-    const assets = release.data.assets.filter(assetFilterFn);
-    if (assets.length === 0)
-        throw new Error('Could not find asset id');
-    for (const asset of assets) {
-        yield fetchAssetFile(octokit, {
-            id: asset.id,
-            outputPath,
-            owner,
-            repo,
-            token
-        });
-    }
-    install(outputPath);
-});
-void main();
+exports.determineFile = determineFile;
+const filterByFileName = (file) => (asset) => file === asset.name;
+exports.filterByFileName = filterByFileName;
 
 
 /***/ }),
