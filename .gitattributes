@@ -1,2 +1,2 @@
 dist/** -diff linguist-generated=true
-yarn.lock 
+yarn.lock linguist-generated 
