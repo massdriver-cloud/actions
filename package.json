@@ -5,7 +5,7 @@
   "description": "A Github Action for setting up the Massdriver CLI",
   "main": "src/main.ts",
   "pre-commit": [
-    "all-but-test"
+    "all"
   ],
   "scripts": {
     "build": "tsc",
@@ -14,7 +14,8 @@
     "lint": "eslint src/**/*.ts",
     "package": "ncc build --source-map --license licenses.txt",
     "test": "jest",
-    "all-but-test": "npm run build && npm run format && npm run lint && npm run package"
+    "all-but-test": "npm run build && npm run format && npm run lint && npm run package",
+    "all": "npm run build && npm run format && npm run lint && npm run package && npm run test"
   },
   "repository": {
     "type": "git",
