@@ -1,2 +1,4 @@
 dist/** -diff linguist-generated=true
-yarn.lock linguist-generated 
+yarn.lock linguist-generated
+*index.ts*
+.gitignore
