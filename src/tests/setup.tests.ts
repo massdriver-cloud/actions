@@ -1,7 +1,7 @@
-import {SetupOptions} from '../actions/index'
+import {SetupActionOptions} from '../actions/index'
 
 test('run successfully', async () => {
-  const opts: SetupOptions = {
+  const opts: SetupActionOptions = {
     tag: 'foo',
     token: 'bar'
   }
