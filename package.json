@@ -5,7 +5,7 @@
   "description": "A Github Action for setting up the Massdriver CLI",
   "main": "src/main.ts",
   "pre-commit": [
-    "all"
+    "all-but-test"
   ],
   "scripts": {
     "build": "tsc",
