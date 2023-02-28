@@ -1,14 +1,14 @@
 import core from '@actions/core'
 import exec from '@actions/exec'
 
-interface ApplicationDeployIFace {
+interface ApplicationDeployOptions {
   tag: string
   package_id: string
   params_filepath: string
 }
 
-const applicationDeploy = async (
-  deploy: ApplicationDeployIFace
+const applicationDeployAction = async (
+  deploy: ApplicationDeployOptions
 ): Promise<void> => {
   try {
     const command = `mass application deploy ${deploy.package_id} -f ${deploy.params_filepath} -t ${deploy.tag}`
@@ -22,4 +22,5 @@ const applicationDeploy = async (
   return
 }
 
-export {applicationDeploy, ApplicationDeployIFace}
+export default applicationDeployAction
+export {ApplicationDeployOptions}
