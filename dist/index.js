@@ -18221,7 +18221,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         token
     };
     (0, actions_1.setupAction)(opts);
-    if ('thing1' == tag) {
+    if ('thing1' === tag) {
         const applicationDeployOpts = {
             tag,
             package_id: 'bar',
