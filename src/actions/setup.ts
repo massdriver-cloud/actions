@@ -22,7 +22,7 @@ const install = async (target: string): Promise<void> => {
 
 const setupAction = async (opts: SetupOptions) => {
   const owner = 'massdriver-cloud'
-  const repo = 'massdriver-cli'
+  const repo = 'mass'
   let {tag} = opts
   const octokit = github.getOctokit(opts.token)
   const release = await getRelease(octokit, tag, owner, repo)

@@ -21,7 +21,7 @@ jobs:
   test: # make sure the action works on a clean machine without building
     strategy:
       matrix:
-        version: ['latest', 'v0.4.8']
+        version: ['latest', 'v1.0.0']
         runner: ['ubuntu-latest', 'macos-latest']
     runs-on: ${{ matrix.runner}}
     steps:

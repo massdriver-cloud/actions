@@ -4,8 +4,8 @@ author: 'Massdriver, Inc.'
 inputs:
   tag:
     description: |
-      The release tag to fetch. Can be either a tag like `v0.4.8` or `latest`.
-      Releases can be found at https://github.com/massdriver-cloud/massdriver-cli.
+      The release tag to fetch. Can be either a tag like `v1.0.0` or `latest`.
+      Releases can be found at https://github.com/massdriver-cloud/mass.
     required: false
     default: 'latest'
   token:
