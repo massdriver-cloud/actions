@@ -23,7 +23,7 @@ This will download the latest version of the Massdriver CLI. Optionally, a `tag`
 - name: Install Massdriver CLI
   uses: massdriver-cloud/actions/setup@v2.1
   with:
-    tag: v1.0.0
+    tag: 1.0.0
 ```
 
 We test this action against `ubuntu-latest` and `macos-latest` GitHub runners. If you need to use this action on a different runner, please [open an issue](https://github.com/massdriver-cloud/actions/issues/new).
