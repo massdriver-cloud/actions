@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v2.1
+        uses: massdriver-cloud/actions/setup@v3
       - name: Use Massdriver CLI
         run: mass help
 ```
@@ -21,7 +21,7 @@ This will download the latest version of the Massdriver CLI. Optionally, a `tag`
 
 ```yaml
 - name: Install Massdriver CLI
-  uses: massdriver-cloud/actions/setup@v2.1
+  uses: massdriver-cloud/actions/setup@v3
   with:
     tag: 1.0.0
 ```
