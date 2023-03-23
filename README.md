@@ -4,7 +4,7 @@ A collection of GitHub Actions for interacting with [Massdriver](https://massdri
 
 ## Setup
 
-Use this action to set up the Massdriver CLI for use in your workflows:
+Use this action to set up the [Massdriver CLI](https://github.com/massdriver-cloud/mass) for use in your workflows:
 
 ```yaml
 jobs:
@@ -17,13 +17,13 @@ jobs:
         run: mass help
 ```
 
-This will download the latest version of the Massdriver CLI. Optionally, a `tag` may be specified to install a specific [tagged release](https://github.com/massdriver-cloud/massdriver-cli/releases):
+This will download the latest version of the Massdriver CLI. Optionally, a `tag` may be specified to install a specific [tagged release](https://github.com/massdriver-cloud/mass/releases):
 
 ```yaml
 - name: Install Massdriver CLI
   uses: massdriver-cloud/actions/setup@v2.1
   with:
-    tag: v0.4.8
+    tag: 1.0.0
 ```
 
 We test this action against `ubuntu-latest` and `macos-latest` GitHub runners. If you need to use this action on a different runner, please [open an issue](https://github.com/massdriver-cloud/actions/issues/new).

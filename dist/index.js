@@ -18106,7 +18106,7 @@ const install = (target) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const setupAction = (opts) => __awaiter(void 0, void 0, void 0, function* () {
     const owner = 'massdriver-cloud';
-    const repo = 'massdriver-cli';
+    const repo = 'mass';
     let { tag } = opts;
     const octokit = github.getOctokit(opts.token);
     const release = yield (0, index_1.getRelease)(octokit, tag, owner, repo);
