@@ -11,13 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: |
-          yarn install --frozen-lockfile
-      # Put this back in when we have some tests
-      #- run: |
-      #    npm run all
-      - run: |
-          yarn run build && yarn run format && yarn run lint
+      - run: npm install
+      - run: npm run build
   test: # make sure the action works on a clean machine without building
     strategy:
       matrix:

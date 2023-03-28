@@ -8,16 +8,22 @@ import {
   fetchAssetFile,
   filterByFileName,
   getRelease
-} from '../utils/index'
+} from './utils/index'
 
 interface SetupOptions {
   readonly tag: string
   readonly token: string
 }
 
-const install = async (target: string): Promise<void> => {
-  const pathToCLI = await tc.extractTar(target)
-  core.addPath(pathToCLI)
+const run = async (): Promise<void> => {
+  const token = core.getInput('token', {required: false})
+  const tag = core.getInput('tag', {required: false})
+
+  const opts: SetupOptions = {
+    tag,
+    token
+  }
+  setupAction(opts)
 }
 
 const setupAction = async (opts: SetupOptions) => {
@@ -45,5 +51,12 @@ const setupAction = async (opts: SetupOptions) => {
   install(outputPath)
 }
 
-export default setupAction
+const install = async (target: string): Promise<void> => {
+  const pathToCLI = await tc.extractTar(target)
+  core.addPath(pathToCLI)
+}
+
+run()
+
 export {SetupOptions}
+export default run
