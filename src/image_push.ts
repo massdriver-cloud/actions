@@ -7,6 +7,7 @@ const run = async (): Promise<void> => {
   const artifact = core.getInput("artifact")
   const region = core.getInput("region")
   const imageTag = core.getInput("image-tag", {required: false})
+  const buildContext = core.getInput("build-context", {required: false})
 
   try {
     const command = `mass image push ${namespace}/${imageName}`
@@ -16,7 +17,9 @@ const run = async (): Promise<void> => {
       `--image-tag`,
       imageTag,
       `--region`,
-      region
+      region,
+      `--build-context`,
+      buildContext
     ]
     await exec.exec(command, args)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

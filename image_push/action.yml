@@ -30,6 +30,12 @@ inputs:
       Defaults to `latest`.
     required: false
     default: 'latest'
+  build-context:
+    description: |
+      Path to the directory to build the image from.
+      Defaults to `.`.
+    required: false
+    default: '.'
 runs:
   using: 'node16'
   main: '../dist/image_push/index.js'
