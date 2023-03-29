@@ -1,5 +1,5 @@
-import core from '@actions/core'
-import exec from '@actions/exec'
+import core from "@actions/core"
+import exec from "@actions/exec"
 
 const run = async (): Promise<void> => {
   try {

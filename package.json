@@ -1,11 +1,11 @@
 {
   "name": "massdriver-setup",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "private": true,
   "description": "A Github Action for setting up the Massdriver CLI",
   "main": "dist/setup/index.js",
   "scripts": {
-    "build": "tsc && ncc build -o dist/setup src/setup.ts && ncc build -o dist/bundle/publish src/bundle/publish.ts",
+    "build": "tsc && ncc build -o dist/setup src/setup.ts && ncc build -o dist/bundle_publish src/bundle_publish.ts && ncc build -o dist/image_push src/image_push.ts",
     "format": "prettier --write '**/*.ts'",
     "format-check": "prettier --check '**/*.ts'",
     "lint": "eslint src/**/*.ts",

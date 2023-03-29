@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v3
+        uses: massdriver-cloud/actions/setup@v3.1
       - name: Use Massdriver CLI
         run: mass help
 ```
@@ -21,14 +21,11 @@ This will download the latest version of the Massdriver CLI. Optionally, a `tag`
 
 ```yaml
 - name: Install Massdriver CLI
-  uses: massdriver-cloud/actions/setup@v3
+  uses: massdriver-cloud/actions/setup@v3.1
   with:
     tag: 1.0.0
 ```
-
-## Bundle Actions
-
-### Publish
+## Bundle Publish
 
 Use this action to publish a bundle to Massdriver:
 
@@ -38,13 +35,35 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MASSDRIVER_API_KEY: ${{ secrets.MASSDRIVER_API_KEY }}
-      MASSDRIVER_ORG_ID: ${{ secrets.MASSDRIVER_ORG_ID }}
+      MASSDRIVER_ORG_ID: ${{ vars.MASSDRIVER_ORG_ID }}
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v3
+        uses: massdriver-cloud/actions/setup@v3.1
       - name: Publish Bundle
-        run: massdriver-cloud/actions/bundle/publish@v3
+        uses: massdriver-cloud/actions/bundle_publish@v3.1
 ```
 
-If you do not yet have an API key, you can generate one in the [Massdriver Console](https://app.massdriver.cloud/organization/api-keys).
+## Image Push
+
+Use this action to push an image, using the Massdriver CLI, to any of the supported cloud providers.
+
+```yaml
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      MASSDRIVER_API_KEY: ${{ secrets.MASSDRIVER_API_KEY }}
+      MASSDRIVER_ORG_ID: ${{ vars.MASSDRIVER_ORG_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Massdriver CLI
+        uses: massdriver-cloud/actions/setup@v3.1
+      - name: Push Image
+        uses: massdriver-cloud/actions/image_push@v3.1
+        with:
+          namespace: 'massdriver-cloud'
+          image-name: 'massdriver'
+          artifact: ${{ vars.MASSDRIVER_ARTIFACT_ID }}
+          region: 'us-west-2'
+```
