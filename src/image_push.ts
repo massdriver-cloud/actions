@@ -8,6 +8,7 @@ const run = async (): Promise<void> => {
   const region = core.getInput("region")
   const imageTag = core.getInput("image-tag", {required: false})
   const buildContext = core.getInput("build-context", {required: false})
+  const dockerfile = core.getInput("dockerfile", {required: false})
 
   try {
     const command = `mass image push ${namespace}/${imageName}`
@@ -19,7 +20,9 @@ const run = async (): Promise<void> => {
       `--region`,
       region,
       `--build-context`,
-      buildContext
+      buildContext,
+      `--dockerfile`,
+      dockerfile
     ]
     await exec.exec(command, args)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

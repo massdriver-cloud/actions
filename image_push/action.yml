@@ -36,6 +36,12 @@ inputs:
       Defaults to `.`.
     required: false
     default: '.'
+  dockerfile:
+    description: |
+      Name of the Dockerfile.
+      Defaults to `Dockerfile`.
+    required: false
+    default: 'Dockerfile'
 runs:
   using: 'node16'
   main: '../dist/image_push/index.js'
