@@ -3,7 +3,7 @@ import exec from '@actions/exec'
 
 const run = async (): Promise<void> => {
   try {
-    const command = `mass bundle build`
+    const command = `mass bundle publish`
     await exec.exec(command)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
