@@ -3979,7 +3979,6 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const command = `mass bundle build`;
         yield exec_1.default.exec(command);
-        // "must be set to any or unkown if specified"
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
     catch (error) {
