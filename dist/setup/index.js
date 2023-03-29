@@ -18085,8 +18085,8 @@ const github = __importStar(__nccwpck_require__(5438));
 const tc = __importStar(__nccwpck_require__(7784));
 const index_1 = __nccwpck_require__(6252);
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
-    const token = core.getInput('token', { required: false });
-    const tag = core.getInput('tag', { required: false });
+    const token = core.getInput("token", { required: false });
+    const tag = core.getInput("tag", { required: false });
     const opts = {
         tag,
         token
@@ -18094,18 +18094,18 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     setupAction(opts);
 });
 const setupAction = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    const owner = 'massdriver-cloud';
-    const repo = 'mass';
+    const owner = "massdriver-cloud";
+    const repo = "mass";
     let { tag } = opts;
     const octokit = github.getOctokit(opts.token);
     const release = yield (0, index_1.getRelease)(octokit, tag, owner, repo);
-    tag = tag === 'latest' ? release.data.tag_name : tag;
+    tag = tag === "latest" ? release.data.tag_name : tag;
     const file = (0, index_1.determineFile)(tag);
-    const outputPath = `${process.env['RUNNER_TOOL_CACHE']}/${file}`;
+    const outputPath = `${process.env["RUNNER_TOOL_CACHE"]}/${file}`;
     const assetFilterFn = (0, index_1.filterByFileName)(file);
     const assets = release.data.assets.filter(assetFilterFn);
     if (assets.length === 0)
-        throw new Error('Could not find asset id');
+        throw new Error("Could not find asset id");
     for (const asset of assets) {
         yield (0, index_1.fetchAssetFile)(octokit, {
             id: asset.id,
@@ -18174,10 +18174,10 @@ const async_retry_1 = __importDefault(__nccwpck_require__(3415));
 const fs_1 = __nccwpck_require__(7147);
 const node_fetch_1 = __importDefault(__nccwpck_require__(4429));
 const baseFetchAssetFile = (octokit, { id, outputPath, owner, repo, token }) => __awaiter(void 0, void 0, void 0, function* () {
-    const { body, headers: { accept, 'user-agent': userAgent }, method, url } = octokit.request.endpoint('GET /repos/:owner/:repo/releases/assets/:asset_id', {
+    const { body, headers: { accept, "user-agent": userAgent }, method, url } = octokit.request.endpoint("GET /repos/:owner/:repo/releases/assets/:asset_id", {
         asset_id: id,
         headers: {
-            accept: 'application/octet-stream'
+            accept: "application/octet-stream"
         },
         owner,
         repo
@@ -18186,13 +18186,13 @@ const baseFetchAssetFile = (octokit, { id, outputPath, owner, repo, token }) => 
         accept,
         authorization: `token ${token}`
     };
-    if (typeof userAgent !== 'undefined')
-        headers = Object.assign(Object.assign({}, headers), { 'user-agent': userAgent });
+    if (typeof userAgent !== "undefined")
+        headers = Object.assign(Object.assign({}, headers), { "user-agent": userAgent });
     const response = yield (0, node_fetch_1.default)(url, { body, headers, method });
     if (!response.ok) {
         const text = yield response.text();
         core.warning(text);
-        throw new Error('Invalid response');
+        throw new Error("Invalid response");
     }
     const blob = yield response.blob();
     const arrayBuffer = yield blob.arrayBuffer();
@@ -18226,7 +18226,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getRelease = void 0;
 const getRelease = (octokit, tag, owner, repo) => __awaiter(void 0, void 0, void 0, function* () {
-    if (tag === 'latest') {
+    if (tag === "latest") {
         return octokit.rest.repos.getLatestRelease({ owner, repo });
     }
     else {
@@ -18283,7 +18283,7 @@ Object.defineProperty(exports, "getRelease", ({ enumerable: true, get: function 
 const determineArch = () => {
     const arch = os.arch();
     const mappings = {
-        x64: 'amd64'
+        x64: "amd64"
     };
     return mappings[arch] || arch;
 };

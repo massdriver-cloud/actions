@@ -3,4 +3,4 @@ description: 'Publishes a bundle to Massdriver'
 author: 'Massdriver, Inc.'
 runs:
   using: 'node16'
-  main: '../dist/bundle/publish/index.js'
+  main: '../dist/bundle_publish/index.js'

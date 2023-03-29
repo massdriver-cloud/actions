@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import * as core from '@actions/core'
-import * as github from '@actions/github'
-import retry from 'async-retry'
-import {promises as fs} from 'fs'
-import fetch from 'node-fetch'
+import * as core from "@actions/core"
+import * as github from "@actions/github"
+import retry from "async-retry"
+import {promises as fs} from "fs"
+import fetch from "node-fetch"
 
 interface FetchAssetFileOptions {
   readonly id: number
@@ -19,15 +19,15 @@ const baseFetchAssetFile = async (
 ) => {
   const {
     body,
-    headers: {accept, 'user-agent': userAgent},
+    headers: {accept, "user-agent": userAgent},
     method,
     url
   } = octokit.request.endpoint(
-    'GET /repos/:owner/:repo/releases/assets/:asset_id',
+    "GET /repos/:owner/:repo/releases/assets/:asset_id",
     {
       asset_id: id,
       headers: {
-        accept: 'application/octet-stream'
+        accept: "application/octet-stream"
       },
       owner,
       repo
@@ -37,14 +37,14 @@ const baseFetchAssetFile = async (
     accept,
     authorization: `token ${token}`
   }
-  if (typeof userAgent !== 'undefined')
-    headers = {...headers, 'user-agent': userAgent}
+  if (typeof userAgent !== "undefined")
+    headers = {...headers, "user-agent": userAgent}
 
   const response = await fetch(url, {body, headers, method})
   if (!response.ok) {
     const text = await response.text()
     core.warning(text)
-    throw new Error('Invalid response')
+    throw new Error("Invalid response")
   }
   const blob = await response.blob()
   const arrayBuffer = await blob.arrayBuffer()

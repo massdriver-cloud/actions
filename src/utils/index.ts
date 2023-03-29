@@ -1,11 +1,11 @@
-import * as os from 'os'
-import fetchAssetFile from './fetch-asset'
-import {Asset, getRelease} from './get-release'
+import * as os from "os"
+import fetchAssetFile from "./fetch-asset"
+import {Asset, getRelease} from "./get-release"
 
 const determineArch = (): string => {
   const arch: string = os.arch()
   const mappings: {[key: string]: string} = {
-    x64: 'amd64'
+    x64: "amd64"
   }
   return mappings[arch] || arch
 }

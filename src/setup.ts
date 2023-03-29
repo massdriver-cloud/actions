@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import * as core from '@actions/core'
-import * as github from '@actions/github'
-import * as tc from '@actions/tool-cache'
+import * as core from "@actions/core"
+import * as github from "@actions/github"
+import * as tc from "@actions/tool-cache"
 
 import {
   determineFile,
   fetchAssetFile,
   filterByFileName,
   getRelease
-} from './utils/index'
+} from "./utils/index"
 
 interface SetupOptions {
   readonly tag: string
@@ -16,8 +16,8 @@ interface SetupOptions {
 }
 
 const run = async (): Promise<void> => {
-  const token = core.getInput('token', {required: false})
-  const tag = core.getInput('tag', {required: false})
+  const token = core.getInput("token", {required: false})
+  const tag = core.getInput("tag", {required: false})
 
   const opts: SetupOptions = {
     tag,
@@ -27,18 +27,18 @@ const run = async (): Promise<void> => {
 }
 
 const setupAction = async (opts: SetupOptions) => {
-  const owner = 'massdriver-cloud'
-  const repo = 'mass'
+  const owner = "massdriver-cloud"
+  const repo = "mass"
   let {tag} = opts
   const octokit = github.getOctokit(opts.token)
   const release = await getRelease(octokit, tag, owner, repo)
-  tag = tag === 'latest' ? release.data.tag_name : tag
+  tag = tag === "latest" ? release.data.tag_name : tag
 
   const file = determineFile(tag)
-  const outputPath = `${process.env['RUNNER_TOOL_CACHE']}/${file}`
+  const outputPath = `${process.env["RUNNER_TOOL_CACHE"]}/${file}`
   const assetFilterFn = filterByFileName(file)
   const assets = release.data.assets.filter(assetFilterFn)
-  if (assets.length === 0) throw new Error('Could not find asset id')
+  if (assets.length === 0) throw new Error("Could not find asset id")
   for (const asset of assets) {
     await fetchAssetFile(octokit, {
       id: asset.id,

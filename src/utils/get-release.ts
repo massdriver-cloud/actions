@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import * as github from '@actions/github'
+import * as github from "@actions/github"
 
 type GetReleaseResult = ReturnType<typeof getRelease> extends Promise<infer T>
   ? T
   : never
-type Asset = GetReleaseResult['data']['assets'][0]
+type Asset = GetReleaseResult["data"]["assets"][0]
 
 const getRelease = async (
   octokit: ReturnType<typeof github.getOctokit>,
@@ -12,7 +12,7 @@ const getRelease = async (
   owner: string,
   repo: string
 ) => {
-  if (tag === 'latest') {
+  if (tag === "latest") {
     return octokit.rest.repos.getLatestRelease({owner, repo})
   } else {
     return octokit.rest.repos.getReleaseByTag({

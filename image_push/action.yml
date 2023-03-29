@@ -1,0 +1,35 @@
+name: 'Image Push'
+description: |
+  Create registries, repositories and push images via the Massdriver CLI.
+  Massdriver will build a Docker registry if it does not exist in the region
+  in which you are pushing an image, create a repository in that region's
+  registry and finally push a tagged version of the image to that repository.
+author: 'Massdriver, Inc.'
+inputs:
+  namespace:
+    description: |
+      The namespace of the image.
+      Example: `massdriver-cloud`
+    required: true
+  image-name:
+    description: |
+      The name of the image.
+      Example: `massdriver`
+    required: true
+  artifact:
+    description: |
+      The ID of the credential artifact in Massdriver authorized to access the cloud account to which the image will be pushed.
+    required: true
+  region:
+    description: |
+      Cloud region to push the image to. Varies by cloud.
+    required: true
+  image-tag:
+    description: |
+      The tag of the image to push.
+      Defaults to `latest`.
+    required: false
+    default: 'latest'
+runs:
+  using: 'node16'
+  main: '../dist/image_push/index.js'

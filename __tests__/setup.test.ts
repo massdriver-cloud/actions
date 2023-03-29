@@ -1,11 +1,11 @@
-import {SetupOptions} from '../src/setup'
+import {SetupOptions} from "../src/setup"
 
-test('run successfully', async () => {
+test("run successfully", async () => {
   const opts: SetupOptions = {
-    tag: 'foo',
-    token: 'bar'
+    tag: "foo",
+    token: "bar"
   }
-  expect(opts.tag).toEqual('foo')
+  expect(opts.tag).toEqual("foo")
 
   // is this the right scope to test?
   // what's a sane GHA test, how do we auto-generate all of this ChatGPlease?
