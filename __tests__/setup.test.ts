@@ -1,4 +1,4 @@
-import {SetupOptions} from '../actions/index'
+import {SetupOptions} from '../src/setup'
 
 test('run successfully', async () => {
   const opts: SetupOptions = {
