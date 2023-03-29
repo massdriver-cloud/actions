@@ -4001,6 +4001,8 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const artifact = core.getInput("artifact");
     const region = core.getInput("region");
     const imageTag = core.getInput("image-tag", { required: false });
+    const buildContext = core.getInput("build-context", { required: false });
+    const dockerfile = core.getInput("dockerfile", { required: false });
     try {
         const command = `mass image push ${namespace}/${imageName}`;
         const args = [
@@ -4009,7 +4011,11 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
             `--image-tag`,
             imageTag,
             `--region`,
-            region
+            region,
+            `--build-context`,
+            buildContext,
+            `--dockerfile`,
+            dockerfile
         ];
         yield exec.exec(command, args);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
