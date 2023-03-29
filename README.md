@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v3
+        uses: massdriver-cloud/actions/setup@v3.1
       - name: Use Massdriver CLI
         run: mass help
 ```
@@ -21,7 +21,7 @@ This will download the latest version of the Massdriver CLI. Optionally, a `tag`
 
 ```yaml
 - name: Install Massdriver CLI
-  uses: massdriver-cloud/actions/setup@v3
+  uses: massdriver-cloud/actions/setup@v3.1
   with:
     tag: 1.0.0
 ```
@@ -39,9 +39,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v3
+        uses: massdriver-cloud/actions/setup@v3.1
       - name: Publish Bundle
-        uses: massdriver-cloud/actions/bundle_publish@v3
+        uses: massdriver-cloud/actions/bundle_publish@v3.1
 ```
 
 ## Image Push
@@ -58,9 +58,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v3
+        uses: massdriver-cloud/actions/setup@v3.1
       - name: Push Image
-        uses: massdriver-cloud/actions/image_push@andreas/more_actions
+        uses: massdriver-cloud/actions/image_push@v3.1
         with:
           namespace: 'massdriver-cloud'
           image-name: 'massdriver'
