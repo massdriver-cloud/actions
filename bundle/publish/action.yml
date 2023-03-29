@@ -1,0 +1,6 @@
+name: 'Publish Bundle'
+description: 'Publishes a bundle to Massdriver'
+author: 'Massdriver, Inc.'
+runs:
+  using: 'node16'
+  main: '../dist/bundle/publish/index.js'

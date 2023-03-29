@@ -26,4 +26,25 @@ This will download the latest version of the Massdriver CLI. Optionally, a `tag`
     tag: 1.0.0
 ```
 
-We test this action against `ubuntu-latest` and `macos-latest` GitHub runners. If you need to use this action on a different runner, please [open an issue](https://github.com/massdriver-cloud/actions/issues/new).
+## Bundle Actions
+
+### Publish
+
+Use this action to publish a bundle to Massdriver:
+
+```yaml
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      MASSDRIVER_API_KEY: ${{ secrets.MASSDRIVER_API_KEY }}
+      MASSDRIVER_ORG_ID: ${{ secrets.MASSDRIVER_ORG_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Massdriver CLI
+        uses: massdriver-cloud/actions/setup@v3
+      - name: Publish Bundle
+        run: massdriver-cloud/actions/bundle/publish@v3
+```
+
+If you do not yet have an API key, you can generate one in the [Massdriver Console](https://app.massdriver.cloud/organization/api-keys).
