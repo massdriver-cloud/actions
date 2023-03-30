@@ -27,6 +27,30 @@ This will download the latest version of the Massdriver CLI. Optionally, a `tag`
     tag: 1.0.0
 ```
 
+## App Deploy
+
+Deploys a configured application to Massdriver.
+
+```yaml
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      MASSDRIVER_API_KEY: ${{ secrets.MASSDRIVER_API_KEY }}
+      MASSDRIVER_ORG_ID: ${{ vars.MASSDRIVER_ORG_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Massdriver CLI
+        uses: massdriver-cloud/actions/setup@v3.1
+      - name: Deploy App
+        uses: massdriver-cloud/actions/app_deploy@v3.1
+        with:
+          project: ecomm
+          target: prod
+          manifest: db
+```
+
+
 ## App Patch
 
 This action will patch the parameters of an existing application.
