@@ -1,4 +1,4 @@
-name: 'Image Push'
+name: 'App Patch'
 description: |
   Patch application configuration on Massdriver.
   Your application must be published as a [bundle](https://docs.massdriver.cloud/bundles) to Massdriver first and deployed to an environment (target).
