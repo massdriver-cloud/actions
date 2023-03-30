@@ -42,8 +42,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
         uses: massdriver-cloud/actions/setup@v3.1
-      - name: Push Image
-        uses: massdriver-cloud/actions/image_push@v3.1
+      - name: Patch App
+        uses: massdriver-cloud/actions/app_patch@v3.1
         with:
           project: ecomm
           target: prod
