@@ -1,0 +1,26 @@
+name: 'App Patch'
+description: |
+  Patch application configuration on Massdriver.
+  Your application must be published as a [bundle](https://docs.massdriver.cloud/bundles) to Massdriver first and deployed to an environment (target).
+author: 'Massdriver, Inc.'
+inputs:
+  project:
+    description: |
+      The name of the project in which the application is deployed.
+    required: true
+  target:
+    description: |
+      The name of the target to which the application is deployed.
+    required: true
+  manifest:
+    description: |
+      The slug of the manifest to patch. Can be found by hovering over the bundle in the Massdriver diagram UI.
+    required: true
+  set:
+    description: |
+      Set a number of package parameters using JQ expressions.
+      One parameter per line.
+    required: true
+runs:
+  using: 'node16'
+  main: '../dist/app_patch/index.js'

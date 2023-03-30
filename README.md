@@ -4,7 +4,8 @@ A collection of GitHub Actions for interacting with [Massdriver](https://massdri
 
 ## Setup
 
-Use this action to set up the [Massdriver CLI](https://github.com/massdriver-cloud/mass) for use in your workflows:
+Use this action to set up the [Massdriver CLI](https://github.com/massdriver-cloud/mass) for use in your workflows.
+This is a prerequisite for using any of the below GitHub Actions.
 
 ```yaml
 jobs:
@@ -25,6 +26,33 @@ This will download the latest version of the Massdriver CLI. Optionally, a `tag`
   with:
     tag: 1.0.0
 ```
+
+## App Patch
+
+This action will patch the parameters of an existing application.
+
+```yaml
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      MASSDRIVER_API_KEY: ${{ secrets.MASSDRIVER_API_KEY }}
+      MASSDRIVER_ORG_ID: ${{ vars.MASSDRIVER_ORG_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Massdriver CLI
+        uses: massdriver-cloud/actions/setup@v3.1
+      - name: Patch App
+        uses: massdriver-cloud/actions/app_patch@v3.1
+        with:
+          project: ecomm
+          target: prod
+          manifest: db
+          set: |
+            .image.repository = "example/foo"
+            .image.tag = "v2"
+```
+
 ## Bundle Publish
 
 Use this action to publish a bundle to Massdriver:
