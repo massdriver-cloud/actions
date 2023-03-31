@@ -1,0 +1,21 @@
+name: 'App Deploy'
+description: |
+  Deploy application on Massdriver.
+  Your application must be published as a [bundle](https://docs.massdriver.cloud/bundles) to Massdriver first and configured for a given environment (target).
+author: 'Massdriver, Inc.'
+inputs:
+  project:
+    description: |
+      The name of the project in which the application is configured.
+    required: true
+  target:
+    description: |
+      The name of the target to which the application is configured.
+    required: true
+  manifest:
+    description: |
+      The slug of the manifest to deploy. Can be found by hovering over the bundle in the Massdriver diagram UI.
+    required: true
+runs:
+  using: 'node16'
+  main: '../dist/app_deploy/index.js'
