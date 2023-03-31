@@ -4002,7 +4002,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const set = core.getMultilineInput("set");
     try {
         const command = `mass app patch ${project}-${target}-${manifest}`;
-        const args = set.map(s => `--set='${s}'`);
+        const args = set.map(s => `--set=${s}`);
         yield exec.exec(command, args);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }

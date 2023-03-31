@@ -9,7 +9,7 @@ const run = async (): Promise<void> => {
 
   try {
     const command = `mass app patch ${project}-${target}-${manifest}`
-    const args = set.map(s => `--set='${s}'`)
+    const args = set.map(s => `--set=${s}`)
     await exec.exec(command, args)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
