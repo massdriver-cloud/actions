@@ -1,6 +1,12 @@
 name: 'Publish Bundle'
 description: 'Publishes a bundle to Massdriver'
 author: 'Massdriver, Inc.'
+inputs:
+  build-directory:
+    description: |
+      Path to a directory containing a massdriver.yaml file.
+    required: false
+    default: '.'
 runs:
   using: 'node16'
   main: '../dist/bundle_publish/index.js'

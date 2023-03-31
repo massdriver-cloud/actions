@@ -3976,9 +3976,11 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __importDefault(__nccwpck_require__(186));
 const exec_1 = __importDefault(__nccwpck_require__(514));
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
+    const buildDirectory = core_1.default.getInput("build-directory", { required: false });
     try {
         const command = `mass bundle publish`;
-        yield exec_1.default.exec(command);
+        const args = [`--build-directory`, buildDirectory];
+        yield exec_1.default.exec(command, args);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
     catch (error) {
