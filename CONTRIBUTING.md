@@ -1,15 +1,18 @@
-This repo includes compilation support, tests, a validation workflow, publishing, and versioning guidance.
+The devContainer will get you set up with node.
 
-Currently requires `node` version 16 to be installed on your machine. We should stuff this into a devcontainer at some point.
+Everything else is done via npm/the Makefile.
 
-Install the dependencies
+`make install` will update your dependencies.
 
-```bash
-$ npm install
-```
+## Building the Actions
 
-To build the typescript and package it for distribution:
+`make build` will build any changes to the actions.
+This changes the files in the `dist` folder corresponding to the edited action.
 
-```bash
-$ npm run build && npm run package
-```
+A GHA will fail if the `dist` folder is not up to date.
+
+## Adding an Action
+
+* create a file <<action_name>>/action.yml
+* create a file src/<<action_name>>.ts for the implementation
+* amend `scripts.build` in package.json to include the new action
