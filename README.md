@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v3.1
+        uses: massdriver-cloud/actions/setup@v3
       - name: Use Massdriver CLI
         run: mass help
 ```
@@ -22,7 +22,7 @@ This will download the latest version of the Massdriver CLI. Optionally, a `tag`
 
 ```yaml
 - name: Install Massdriver CLI
-  uses: massdriver-cloud/actions/setup@v3.1
+  uses: massdriver-cloud/actions/setup@v3
   with:
     tag: 1.0.0
 ```
@@ -41,9 +41,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v3.1
+        uses: massdriver-cloud/actions/setup@v3
       - name: Deploy App
-        uses: massdriver-cloud/actions/app_deploy@v3.1
+        uses: massdriver-cloud/actions/app_deploy@v3
         with:
           project: ecomm
           target: prod
@@ -65,9 +65,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v3.1
+        uses: massdriver-cloud/actions/setup@v3
       - name: Patch App
-        uses: massdriver-cloud/actions/app_patch@v3.1
+        uses: massdriver-cloud/actions/app_patch@v3
         with:
           project: ecomm
           target: prod
@@ -91,9 +91,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v3.1
+        uses: massdriver-cloud/actions/setup@v3
       - name: Publish Bundle
-        uses: massdriver-cloud/actions/bundle_publish@v3.1
+        uses: massdriver-cloud/actions/bundle_publish@v3
 ```
 
 ## Image Push
@@ -110,9 +110,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v3.1
+        uses: massdriver-cloud/actions/setup@v3
       - name: Push Image
-        uses: massdriver-cloud/actions/image_push@v3.1
+        uses: massdriver-cloud/actions/image_push@v3
         with:
           namespace: 'massdriver-cloud'
           image-name: 'massdriver'
