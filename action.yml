@@ -1,6 +1,6 @@
-name: 'Setup Massdriver CLI'
+name: 'Massdriver'
 description: |
-  Deprecated. Use the root action `massdriver-cloud` instead.
+  Set up the Massdriver CLI.
 author: 'Massdriver, Inc.'
 inputs:
   tag:
@@ -16,4 +16,4 @@ inputs:
     default: ${{ github.token }}
 runs:
   using: 'node16'
-  main: '../dist/setup/index.js'
+  main: 'dist/setup/index.js'

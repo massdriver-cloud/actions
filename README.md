@@ -4,8 +4,7 @@ A collection of GitHub Actions for interacting with [Massdriver](https://massdri
 
 ## Setup
 
-Use this action to set up the [Massdriver CLI](https://github.com/massdriver-cloud/mass) for use in your workflows.
-This is a prerequisite for using any of the below GitHub Actions.
+Use the root action to set up the [Massdriver CLI](https://github.com/massdriver-cloud/mass) for use in your workflows.
 
 ```yaml
 jobs:
@@ -13,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v3
+        uses: massdriver-cloud/actions@v3
       - name: Use Massdriver CLI
         run: mass help
 ```
@@ -41,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v3
+        uses: massdriver-cloud/actions@v3
       - name: Deploy App
         uses: massdriver-cloud/actions/app_deploy@v3
         with:
@@ -65,7 +64,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v3
+        uses: massdriver-cloud/actions@v3
       - name: Patch App
         uses: massdriver-cloud/actions/app_patch@v3
         with:
@@ -91,7 +90,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v3
+        uses: massdriver-cloud/actions@v3
       - name: Publish Bundle
         uses: massdriver-cloud/actions/bundle_publish@v3
 ```
@@ -110,7 +109,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v3
+        uses: massdriver-cloud/actions@v3
       - name: Push Image
         uses: massdriver-cloud/actions/image_push@v3
         with:
