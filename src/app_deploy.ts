@@ -3,11 +3,11 @@ import * as exec from "@actions/exec"
 
 const run = async (): Promise<void> => {
   const project = core.getInput("project")
-  const target = core.getInput("target")
+  const env = core.getInput("env")
   const manifest = core.getInput("manifest")
 
   try {
-    const command = `mass app deploy ${project}-${target}-${manifest}`
+    const command = `mass app deploy ${project}-${env}-${manifest}`
     await exec.exec(command)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
