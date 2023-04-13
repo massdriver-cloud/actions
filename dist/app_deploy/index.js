@@ -3997,10 +3997,10 @@ const core = __importStar(__nccwpck_require__(186));
 const exec = __importStar(__nccwpck_require__(514));
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const project = core.getInput("project");
-    const target = core.getInput("target");
+    const env = core.getInput("env");
     const manifest = core.getInput("manifest");
     try {
-        const command = `mass app deploy ${project}-${target}-${manifest}`;
+        const command = `mass app deploy ${project}-${env}-${manifest}`;
         yield exec.exec(command);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }

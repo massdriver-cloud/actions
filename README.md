@@ -45,7 +45,7 @@ jobs:
         uses: massdriver-cloud/actions/app_deploy@v3
         with:
           project: ecomm
-          target: prod
+          env: prod
           manifest: db
 ```
 
@@ -69,7 +69,7 @@ jobs:
         uses: massdriver-cloud/actions/app_patch@v3
         with:
           project: ecomm
-          target: prod
+          env: prod
           manifest: db
           set: |
             .image.repository = "example/foo"
