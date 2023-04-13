@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions@v3
+        uses: massdriver-cloud/actions@v4
       - name: Use Massdriver CLI
         run: mass help
 ```
@@ -21,7 +21,7 @@ This will download the latest version of the Massdriver CLI. Optionally, a `tag`
 
 ```yaml
 - name: Install Massdriver CLI
-  uses: massdriver-cloud/actions/setup@v3
+  uses: massdriver-cloud/actions/setup@v4
   with:
     tag: 1.0.0
 ```
@@ -40,9 +40,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions@v3
+        uses: massdriver-cloud/actions@v4
       - name: Deploy App
-        uses: massdriver-cloud/actions/app_deploy@v3
+        uses: massdriver-cloud/actions/app_deploy@v4
         with:
           project: ecomm
           env: prod
@@ -64,9 +64,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions@v3
+        uses: massdriver-cloud/actions@v4
       - name: Patch App
-        uses: massdriver-cloud/actions/app_patch@v3
+        uses: massdriver-cloud/actions/app_patch@v4
         with:
           project: ecomm
           env: prod
@@ -90,9 +90,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions@v3
+        uses: massdriver-cloud/actions@v4
       - name: Publish Bundle
-        uses: massdriver-cloud/actions/bundle_publish@v3
+        uses: massdriver-cloud/actions/bundle_publish@v4
 ```
 
 ## Image Push
@@ -109,9 +109,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions@v3
+        uses: massdriver-cloud/actions@v4
       - name: Push Image
-        uses: massdriver-cloud/actions/image_push@v3
+        uses: massdriver-cloud/actions/image_push@v4
         with:
           namespace: 'massdriver-cloud'
           image-name: 'massdriver'
