@@ -1,17 +1,17 @@
-name: 'Massdriver'
+name: 'Massdriver Actions'
 description: |
-  Set up the Massdriver CLI.
+  Build, push, publish, patch, and deploy your Massdriver applications.
 author: 'Massdriver, Inc.'
 inputs:
   tag:
     description: |
-      The release tag to fetch. Can be either a tag like `1.0.0` or `latest`.
+      The release tag to fetch. Can be either a tag like `1.2.0` or `latest`.
       Releases can be found at https://github.com/massdriver-cloud/mass.
     required: false
     default: 'latest'
   token:
     description: |
-      The GitHub token used to fetch a release. This is set by GitHub Actions.'
+      The GitHub token used to fetch a release. Set automatically by GitHub Actions.
     required: false
     default: ${{ github.token }}
 runs:
