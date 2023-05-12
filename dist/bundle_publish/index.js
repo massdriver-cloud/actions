@@ -3997,9 +3997,10 @@ const core = __importStar(__nccwpck_require__(186));
 const exec = __importStar(__nccwpck_require__(514));
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const buildDirectory = core.getInput("build-directory", { required: false });
+    const access = core.getInput("access", { required: false });
     try {
         const command = `mass bundle publish`;
-        const args = [`--build-directory`, buildDirectory];
+        const args = [`--build-directory`, buildDirectory, `--access`, access];
         yield exec.exec(command, args);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }

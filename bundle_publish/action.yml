@@ -7,6 +7,11 @@ inputs:
       Path to a directory containing a massdriver.yaml file.
     required: false
     default: '.'
+  access:
+    description: |
+      Access level of bundle once published
+    required: false
+    default: 'private'
 runs:
   using: 'node16'
   main: '../dist/bundle_publish/index.js'
