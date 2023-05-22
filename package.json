@@ -33,7 +33,7 @@
   "devDependencies": {
     "@types/async-retry": "^1.4.5",
     "@types/jest": "^29.5.0",
-    "@types/node": "^18.16.3",
+    "@types/node": "^20.2.3",
     "@typescript-eslint/parser": "^5.59.2",
     "@vercel/ncc": "^0.36.1",
     "eslint": "^8.39.0",
