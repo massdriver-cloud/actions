@@ -67,6 +67,50 @@ jobs:
           manifest: massdriver
 ```
 
+## Quick Setup
+
+To quickly add a basic GH workflow to your project, you can copy the [example workflow](example-workflow.yaml).
+In the spirit of [release early, release often](https://en.wikipedia.org/wiki/Release_early,_release_often), the example deploys on every push to main, but can be easily adapted to your needs.
+
+### Configuration
+
+Configuration is contained to the `env` block in the workflow:
+
+```yml
+env:
+  # Massdriver Secrets
+  # These should be referencing encrypted GH secrets.
+  # For API_KEY and ORG_ID, see https://docs.massdriver.cloud/cli/overview#setup
+  MASSDRIVER_API_KEY: ${{secrets.MASSDRIVER_API_KEY}}
+  MASSDRIVER_ORG_ID: ${{secrets.MASSDRIVER_ORG_ID}}
+  # The Massdriver Artifact used to push the image.
+  # I.e. for AWS, this would reference an aws-iam-role that you've added as credentials to Massdriver.
+  MASSDRIVER_ARTIFACT_ID: ${{secrets.MASSDRIVER_ARTIFACT_ID}}
+  # Massdriver Package Variables
+  # Used to deploy the application. For more information, see https://docs.massdriver.cloud/applications/deploy
+  # The name of the project to which to deploy
+  MASSDRIVER_PROJECT: project
+  # The name of the environment (formerly target) to which to deploy
+  MASSDRIVER_ENVIRONMENT: prod
+  # The name of the manifest
+  MASSDRIVER_MANIFEST: x-app
+  # Registry Variables
+  # The namespace under which the registry should be created
+  REGISTRY_NAMESPACE: mycompany
+  # The name of the image within the registry
+  REGISTRY_IMAGE_NAME: x-app
+  # The region the registry should exist in.
+  # Note the spelling here is cloud-specific -
+  # `us-west-2` for AWS vs `westus2` for Azure.
+  REGISTRY_REGION: us-west-2
+  # Image Tag
+  # By default, we use the SHA of the commit.
+  IMAGE_TAG: ${{github.sha}}
+  # Local paths
+  # Specify the folder containing the bundle's massdriver.yaml.
+  BUNDLE_FOLDER: ./bundle
+```
+
 ## Actions
 
 ### Setup
