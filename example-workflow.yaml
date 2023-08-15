@@ -3,23 +3,24 @@ on:
   push:
     branches: [main]
 
+# Fill in empty values before use and set secrets in GitHub
 env:
   # Massdriver Secrets
   MASSDRIVER_API_KEY: ${{secrets.MASSDRIVER_API_KEY}}
   MASSDRIVER_ORG_ID: ${{secrets.MASSDRIVER_ORG_ID}}
   MASSDRIVER_ARTIFACT_ID: ${{secrets.MASSDRIVER_ARTIFACT_ID}}
   # Package Variables
-  MASSDRIVER_PROJECT: mcm
-  MASSDRIVER_ENVIRONMENT: prod
-  MASSDRIVER_MANIFEST: expop
+  MASSDRIVER_PROJECT: 
+  MASSDRIVER_ENVIRONMENT:
+  MASSDRIVER_MANIFEST:
   # Registry Variables
-  REGISTRY_NAMESPACE: massdriver-cloud
-  REGISTRY_IMAGE_NAME: exporter-operator
-  REGISTRY_REGION: us-west-2
-  # Image Tag
-  IMAGE_TAG: ${{github.sha}}
+  REGISTRY_NAMESPACE: ${{env.GITHUB_REPOSITORY_OWNER}}
+  REGISTRY_IMAGE_NAME: ${{github.event.repository.name}}
+  REGISTRY_REGION:
   # Local paths
   BUNDLE_FOLDER: ./bundle
+  # Image Tag
+  IMAGE_TAG: ${{github.sha}}
 
 jobs:
   ci:
