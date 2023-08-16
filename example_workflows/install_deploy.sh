@@ -4,7 +4,7 @@
 # This script is intended to be run from a folder containing a massdriver.yaml.
 
 WORKFLOW_DIRECTORY=./.github/workflows
-WORKFLOW_NAME=deploy.yml
+WORKFLOW_NAME=md_app_deploy.yaml
 
 # grep for `name` line in massdriver.yaml,
 # cut at `:` and get second group,
@@ -17,12 +17,14 @@ if [ "$PROJECT_NAME" == "" ]; then
 fi
 
 
+echo "This script installs a GitHub workflow for continuous deployment of your application on Massdriver."
+echo "The workflow requires a working Dockerfile to package your application."
 read -p "Install GitHub workflows for continuos deployment of $PROJECT_NAME? [y/n]?" -n 1 -r install_workflows
 echo
 if [[ $install_workflows =~ ^[Yy]$ ]]; then
     echo -n "Installing workflows to $WORKFLOW_DIRECTORY..."
     mkdir --parents $WORKFLOW_DIRECTORY
-    wget -O $WORKFLOW_DIRECTORY/$WORKFLOW_NAME -q https://raw.githubusercontent.com/massdriver-cloud/actions/main/example-workflow.yaml
+    wget -O $WORKFLOW_DIRECTORY/$WORKFLOW_NAME -q https://raw.githubusercontent.com/massdriver-cloud/actions/main/example_workflows/$WORKFLOW_NAME
     echo " done!"
     echo
 
