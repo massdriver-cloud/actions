@@ -18340,7 +18340,14 @@ const determineFile = (tag) => {
     const osPlatform = os.platform();
     // we publish arm64 and amd64 binaries
     const osArch = determineArch();
-    return `mass-${tag}-${osPlatform}-${osArch}.tar.gz`;
+    // After that tag we moved to goreleaser for github.com/massdriver-cloud/mass,
+    // which uses _ instead of -.
+    if (tag > '1.4.1') {
+        return `mass_${tag}_${osPlatform}_${osArch}.tar.gz`;
+    }
+    else {
+        return `mass-${tag}-${osPlatform}-${osArch}.tar.gz`;
+    }
 };
 exports.determineFile = determineFile;
 const filterByFileName = (file) => (asset) => file === asset.name;
