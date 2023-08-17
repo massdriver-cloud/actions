@@ -1,0 +1,26 @@
+name: Massdriver Bundle Publish
+on:
+  push:
+    branches: [main]
+
+# Fill in empty values before use and set secrets in GitHub
+env:
+  # Massdriver Secrets
+  MASSDRIVER_API_KEY: ${{secrets.MASSDRIVER_API_KEY}}
+  MASSDRIVER_ORG_ID: ${{secrets.MASSDRIVER_ORG_ID}}
+  # Local paths
+  BUNDLE_FOLDER: ./bundle
+
+jobs:
+  publish:
+    name: Publish Bundle to Massdriver
+    runs-on: ubuntu-latest
+    needs: ci
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Massdriver CLI
+        uses: massdriver-cloud/actions/setup@v4
+      - name: Publish Bundle
+        uses: massdriver-cloud/actions/bundle_publish@v4
+        with:
+          build-directory: ${{env.BUNDLE_FOLDER}}
