@@ -46,7 +46,7 @@ inputs:
     description: |
       Specifies images that are used for matching cache. Images specified here do not need to have a valid parent chain to match cache.
     required: false
-      default: ''
+      default: '.'
 runs:
   using: 'node16'
   main: '../dist/image_push/index.js'
