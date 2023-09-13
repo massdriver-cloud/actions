@@ -4000,6 +4000,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const imageName = core.getInput("image-name");
     const artifact = core.getInput("artifact");
     const region = core.getInput("region");
+    const imageTag = core.getInput("image-tag", { required: false });
     const imageTags = core.getMultilineInput("image-tags", { required: false });
     const buildContext = core.getInput("build-context", { required: false });
     const dockerfile = core.getInput("dockerfile", { required: false });
@@ -4014,7 +4015,11 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
             buildContext,
             `--dockerfile`,
             dockerfile
-        ].concat(imageTags.flatMap(tag => [`--image-tag`, tag]));
+        ];
+        if (imageTag) {
+            imageTags.push(imageTag);
+        }
+        args.concat(imageTags.flatMap(tag => [`--image-tag`, tag]));
         yield exec.exec(command, args);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }

@@ -1,6 +1,6 @@
 {
   "name": "massdriver-setup",
-  "version": "5.0",
+  "version": "4.3",
   "private": true,
   "description": "A Github Action for setting up the Massdriver CLI",
   "main": "dist/setup/index.js",
