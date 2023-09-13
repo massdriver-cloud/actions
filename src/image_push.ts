@@ -7,16 +7,16 @@ const run = async (): Promise<void> => {
   const artifact = core.getInput("artifact")
   const region = core.getInput("region")
   const imageTag = core.getInput("image-tag", {required: false})
+  const imageTags = core.getMultilineInput("image-tags", {required: false})
   const buildContext = core.getInput("build-context", {required: false})
   const dockerfile = core.getInput("dockerfile", {required: false})
 
   try {
     const command = `mass image push ${namespace}/${imageName}`
+    
     const args = [
       `--artifact`,
       artifact,
-      `--image-tag`,
-      imageTag,
       `--region`,
       region,
       `--build-context`,
@@ -24,6 +24,13 @@ const run = async (): Promise<void> => {
       `--dockerfile`,
       dockerfile
     ]
+    
+    if (imageTag) {
+      imageTags.push(imageTag)
+    }
+    
+    args.concat(imageTags.flatMap(tag => [`--image-tag`, tag]))
+
     await exec.exec(command, args)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {

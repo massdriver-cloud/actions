@@ -4001,6 +4001,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const artifact = core.getInput("artifact");
     const region = core.getInput("region");
     const imageTag = core.getInput("image-tag", { required: false });
+    const imageTags = core.getMultilineInput("image-tags", { required: false });
     const buildContext = core.getInput("build-context", { required: false });
     const dockerfile = core.getInput("dockerfile", { required: false });
     try {
@@ -4008,8 +4009,6 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         const args = [
             `--artifact`,
             artifact,
-            `--image-tag`,
-            imageTag,
             `--region`,
             region,
             `--build-context`,
@@ -4017,6 +4016,10 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
             `--dockerfile`,
             dockerfile
         ];
+        if (imageTag) {
+            imageTags.push(imageTag);
+        }
+        args.concat(imageTags.flatMap(tag => [`--image-tag`, tag]));
         yield exec.exec(command, args);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
