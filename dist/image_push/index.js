@@ -4016,10 +4016,8 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
             `--dockerfile`,
             dockerfile
         ];
-        if (imageTag) {
-            imageTags.push(imageTag);
-        }
-        args.concat(imageTags.flatMap(tag => [`--image-tag`, tag]));
+        const tags = imageTag ? [imageTag] : imageTags;
+        args.concat(tags.flatMap(tag => [`--image-tag`, tag]));
         yield exec.exec(command, args);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }

@@ -25,11 +25,9 @@ const run = async (): Promise<void> => {
       dockerfile
     ]
     
-    if (imageTag) {
-      imageTags.push(imageTag)
-    }
+    const tags = imageTag ? [imageTag] : imageTags
     
-    args.concat(imageTags.flatMap(tag => [`--image-tag`, tag]))
+    args.concat(tags.flatMap(tag => [`--image-tag`, tag]))
 
     await exec.exec(command, args)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
