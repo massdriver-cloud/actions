@@ -42,7 +42,9 @@ jobs:
           # The region in which the container registry resides. Cloud-specific.
           region: 'us-west-2'
           # We use the GH SHA as image tag.
-          image-tag: ${{github.sha}}
+          image-tags: |
+            ${{github.sha}}
+            latest
       # Uploads the bundle to Massdriver
       - name: Publish Bundle
         uses: massdriver-cloud/actions/bundle_publish@v4
