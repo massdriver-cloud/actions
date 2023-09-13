@@ -25,7 +25,9 @@ const run = async (): Promise<void> => {
       dockerfile
     ]
     
-    const tags = imageTag ? [imageTag] : imageTags
+    console.log(`imageTag: ${imageTag}`)
+    
+    const tags = imageTag.length > 0 ? [imageTag] : imageTags
     
     args.concat(tags.flatMap(tag => [`--image-tag`, tag]))
 
