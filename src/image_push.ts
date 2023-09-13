@@ -25,13 +25,11 @@ const run = async (): Promise<void> => {
       dockerfile
     ]
     
-    if (imageTag) {
-      imageTags.push(imageTag)
-    }
+    const tags = imageTag.length > 0 ? [imageTag] : imageTags
     
-    args.concat(imageTags.flatMap(tag => [`--image-tag`, tag]))
+    const args_with_tags = args.concat(tags.flatMap(tag => [`--image-tag`, tag]))
 
-    await exec.exec(command, args)
+    await exec.exec(command, args_with_tags)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     core.setFailed(error.message)
