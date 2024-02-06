@@ -29,8 +29,8 @@ const run = async (): Promise<void> => {
       skipBuild.toString()
     ]
     
-    core.info('imageTag: ${imageTag}')
-    core.info('imageTags: ${imageTags}')
+    core.info(`imageTag: ${imageTag}`)
+    core.info(`imageTags: ${imageTags}`)
     
 
     const tags = imageTag.length > 0 ? [imageTag] : imageTags
