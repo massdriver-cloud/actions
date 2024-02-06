@@ -54,7 +54,7 @@ inputs:
       Skip building the image via mass. An image must be built by a previous action.
       Defaults to `false`.
     required: false
-    default: false
+    default: 'false'
 runs:
   using: 'node16'
   main: '../dist/image_push/index.js'
