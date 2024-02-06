@@ -4004,6 +4004,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const imageTags = core.getMultilineInput("image-tags", { required: false });
     const buildContext = core.getInput("build-context", { required: false });
     const dockerfile = core.getInput("dockerfile", { required: false });
+    const skipBuild = core.getBooleanInput("skip-build", { required: false });
     try {
         const command = `mass image push ${namespace}/${imageName}`;
         const args = [
@@ -4014,7 +4015,9 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
             `--build-context`,
             buildContext,
             `--dockerfile`,
-            dockerfile
+            dockerfile,
+            `--skip-build`,
+            skipBuild.toString()
         ];
         const tags = imageTag.length > 0 ? [imageTag] : imageTags;
         const args_with_tags = args.concat(tags.flatMap(tag => [`--image-tag`, tag]));

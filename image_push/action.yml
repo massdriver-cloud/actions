@@ -49,6 +49,9 @@ inputs:
       Defaults to `Dockerfile`.
     required: false
     default: 'Dockerfile'
+  skip-build:
+    description: |
+      Skip building the image before pushing.
 runs:
   using: 'node16'
   main: '../dist/image_push/index.js'
