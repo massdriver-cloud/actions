@@ -24,6 +24,12 @@ inputs:
     description: |
       Cloud region to push the image to. Varies by cloud.
     required: true
+  image-tag:
+    description: |
+      The tag of the image to push.
+    required: false
+    deprecationMessage: |
+      image-tag has been deprecated in favor of image-tags, which can be used to set multiple tags (or just one!)
   image-tags:
     description: |
       Specify tags for the image.

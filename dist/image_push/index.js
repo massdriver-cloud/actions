@@ -26166,6 +26166,8 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
             `--skip-build`,
             skipBuild.toString()
         ];
+        core.info('imageTag: ${imageTag}');
+        core.info('imageTags: ${imageTags}');
         const tags = imageTag.length > 0 ? [imageTag] : imageTags;
         const args_with_tags = args.concat(tags.flatMap(tag => [`--image-tag`, tag]));
         yield exec.exec(command, args_with_tags);

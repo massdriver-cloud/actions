@@ -29,6 +29,10 @@ const run = async (): Promise<void> => {
       skipBuild.toString()
     ]
     
+    core.info('imageTag: ${imageTag}')
+    core.info('imageTags: ${imageTags}')
+    
+
     const tags = imageTag.length > 0 ? [imageTag] : imageTags
     
     const args_with_tags = args.concat(tags.flatMap(tag => [`--image-tag`, tag]))
