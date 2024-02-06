@@ -1,5 +1,6 @@
 import * as core from "@actions/core"
 import * as exec from "@actions/exec"
+import {Util} from '@docker/actions-toolkit/lib/util';
 
 const run = async (): Promise<void> => {
   const namespace = core.getInput("namespace")
@@ -7,7 +8,7 @@ const run = async (): Promise<void> => {
   const artifact = core.getInput("artifact")
   const region = core.getInput("region")
   const imageTag = core.getInput("image-tag", {required: false})
-  const imageTags = core.getMultilineInput("image-tags", {required: false})
+  const imageTags = Util.getInputList("image-tags", {ignoreComma: true})
   const buildContext = core.getInput("build-context", {required: false})
   const dockerfile = core.getInput("dockerfile", {required: false})
   const skipBuild = core.getBooleanInput("skip-build", {required: false})
