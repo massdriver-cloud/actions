@@ -10,7 +10,7 @@ const run = async (): Promise<void> => {
   const imageTags = core.getMultilineInput("image-tags", {required: false})
   const buildContext = core.getInput("build-context", {required: false})
   const dockerfile = core.getInput("dockerfile", {required: false})
-  const skipBuild = core.getBooleanInput("skip-build", {required: false})
+  const skipBuild = core.getInput("skip-build", {required: false})
 
   try {
     const command = `mass image push ${namespace}/${imageName}`
@@ -25,7 +25,7 @@ const run = async (): Promise<void> => {
       `--dockerfile`,
       dockerfile,
       `--skip-build`,
-      skipBuild.toString()
+      skipBuild
     ]
     
     const tags = imageTag.length > 0 ? [imageTag] : imageTags
