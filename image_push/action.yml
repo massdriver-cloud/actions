@@ -33,7 +33,6 @@ inputs:
   image-tags:
     description: |
       Specify tags for the image.
-      Can specify multiple tags - one per line.
       Defaults to `latest`.
     required: false
     default: 'latest'
