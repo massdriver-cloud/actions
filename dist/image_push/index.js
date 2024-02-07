@@ -26154,7 +26154,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const skipBuild = core.getBooleanInput("skip-build", { required: false });
     try {
         const command = `mass image push ${namespace}/${imageName}`;
-        const args = [
+        const simple_args = [
             `--artifact`,
             artifact,
             `--region`,
@@ -26163,14 +26163,11 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
             buildContext,
             `--dockerfile`,
             dockerfile,
-            `--skip-build`,
-            skipBuild.toString()
         ];
-        core.info(`imageTag: ${imageTag}`);
-        core.info(`imageTags: ${imageTags}`);
         const tags = imageTag.length > 0 ? [imageTag] : imageTags;
-        const args_with_tags = args.concat(tags.flatMap(tag => [`--image-tag`, tag]));
-        yield exec.exec(command, args_with_tags);
+        const skipBuildFlag = skipBuild ? [`--skip-build`] : [];
+        const args = simple_args.concat(tags.flatMap(tag => [`--image-tag`, tag])).concat(skipBuildFlag);
+        yield exec.exec(command, args);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
     catch (error) {
