@@ -25981,7 +25981,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const env = core.getInput("env");
     const manifest = core.getInput("manifest");
     const message = core.getInput("message", { required: false });
-    const messageFlag = message ? [`--message "${message}`] : [];
+    const messageFlag = message ? [`--message "${message}"`] : [];
     try {
         const command = `mass app deploy ${project}-${env}-${manifest}`;
         yield exec.exec(command, messageFlag);

@@ -6,7 +6,7 @@ const run = async (): Promise<void> => {
   const env = core.getInput("env")
   const manifest = core.getInput("manifest")
   const message = core.getInput("message", {required: false})
-  const messageFlag = message ? [`--message "${message}`] : []
+  const messageFlag = message ? [`--message "${message}"`] : []
 
   try {
     const command = `mass app deploy ${project}-${env}-${manifest}`
