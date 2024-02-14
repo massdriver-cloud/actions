@@ -1,6 +1,6 @@
 import * as core from "@actions/core"
 import * as exec from "@actions/exec"
-import {Util} from '@docker/actions-toolkit/lib/util';
+import {Util} from "@docker/actions-toolkit/lib/util"
 
 const run = async (): Promise<void> => {
   const namespace = core.getInput("namespace")
@@ -15,7 +15,8 @@ const run = async (): Promise<void> => {
 
   try {
     const command = `mass image push ${namespace}/${imageName}`
-    
+    const tags = imageTag.length > 0 ? [imageTag] : imageTags
+    const skipBuildFlag = skipBuild ? [`--skip-build`] : []
     const simpleArgs = [
       `--artifact`,
       artifact,
@@ -24,13 +25,11 @@ const run = async (): Promise<void> => {
       `--build-context`,
       buildContext,
       `--dockerfile`,
-      dockerfile,
+      dockerfile
     ]
-
-    const tags = imageTag.length > 0 ? [imageTag] : imageTags
-    const skipBuildFlag = skipBuild ? [`--skip-build`] : []
-    
-    const args = simpleArgs.concat(tags.flatMap(tag => [`--image-tag`, tag])).concat(skipBuildFlag)
+    const args = simpleArgs
+      .concat(tags.flatMap(tag => [`--image-tag`, tag]))
+      .concat(skipBuildFlag)
 
     await exec.exec(command, args)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
