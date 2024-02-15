@@ -1,0 +1,14 @@
+name: 'Preview Decommission'
+description: 'Decommission a Massdriver Preview Environment'
+author: 'Massdriver, Inc.'
+inputs:
+  project:
+    description: |
+      The project from which to decommission a preview environment.
+    required: true
+  env:
+    description: |
+      The name of the environment to decommission.
+runs:
+  using: 'node16'
+  main: '../dist/preview_decommission/index.js'
