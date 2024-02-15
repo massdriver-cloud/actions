@@ -11,4 +11,4 @@ inputs:
       The name of the environment to decommission.
 runs:
   using: 'node16'
-  main: '../dist/preview_deploy/index.js'
+  main: '../dist/preview_decommission/index.js'
