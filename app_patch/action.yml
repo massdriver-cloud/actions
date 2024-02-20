@@ -22,5 +22,5 @@ inputs:
       One parameter per line.
     required: true
 runs:
-  using: 'node16'
+  using: node20
   main: '../dist/app_patch/index.js'

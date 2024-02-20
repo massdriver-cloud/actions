@@ -7,5 +7,5 @@ inputs:
       Path to the file containing the artifact definition to publish.
     required: true
 runs:
-  using: 'node16'
+  using: node20
   main: '../dist/preview_decommission/index.js'
