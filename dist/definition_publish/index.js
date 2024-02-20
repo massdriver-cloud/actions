@@ -25980,7 +25980,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const file = core.getInput("file");
     try {
         const command = `mass definition publish`;
-        const args = [`--f`, file];
+        const args = [`--file`, file];
         yield exec.exec(command, args);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
