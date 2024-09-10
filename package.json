@@ -5,7 +5,7 @@
   "description": "A Github Action for setting up the Massdriver CLI",
   "main": "dist/setup/index.js",
   "scripts": {
-    "build": "tsc && ncc build -o dist/setup src/setup.ts && ncc build -o dist/bundle_publish src/bundle_publish.ts && ncc build -o dist/image_push src/image_push.ts && ncc build -o dist/app_patch src/app_patch.ts && ncc build -o dist/app_deploy src/app_deploy.ts && ncc build -o dist/preview_deploy src/preview_deploy.ts && ncc build -o dist/preview_decommission src/preview_decommission.ts && ncc build -o dist/definition_publish src/definition_publish.ts",
+    "build": "tsc && ncc build -o dist/setup src/setup.ts && ncc build -o dist/bundle_publish src/bundle_publish.ts && ncc build -o dist/bundle_build src/bundle_build.ts && ncc build -o dist/image_push src/image_push.ts && ncc build -o dist/app_patch src/app_patch.ts && ncc build -o dist/app_deploy src/app_deploy.ts && ncc build -o dist/preview_deploy src/preview_deploy.ts && ncc build -o dist/preview_decommission src/preview_decommission.ts && ncc build -o dist/definition_publish src/definition_publish.ts",
     "format": "prettier --write '**/*.ts'",
     "format-check": "prettier --check '**/*.ts'",
     "lint": "eslint src/**/*.ts",

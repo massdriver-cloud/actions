@@ -1,0 +1,12 @@
+name: 'Build Bundle'
+description: 'Builds schemas from massdriver.yaml file'
+author: 'Massdriver, Inc.'
+inputs:
+  build-directory:
+    description: |
+      Path to a directory containing a massdriver.yaml file.
+    required: false
+    default: '.'
+runs:
+  using: node20
+  main: '../dist/bundle_build/index.js'
