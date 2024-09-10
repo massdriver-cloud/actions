@@ -1,0 +1,11 @@
+name: 'Definition Publish'
+description: 'Publish a Massdriver Artifact Definition'
+author: 'Massdriver, Inc.'
+inputs:
+  file:
+    description: |
+      Path to the file containing the artifact definition to publish.
+    required: true
+runs:
+  using: node20
+  main: '../dist/definition_publish/index.js'

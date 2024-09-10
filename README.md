@@ -28,10 +28,10 @@ jobs:
       - uses: actions/checkout@v3
       # Sets up the Massdriver CLI on the runner.
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v4
+        uses: massdriver-cloud/actions/setup@v5
       # Set up a container registry, 
       - name: Push Image
-        uses: massdriver-cloud/actions/image_push@v4
+        uses: massdriver-cloud/actions/image_push@v5
         with:
           namespace: 'massdriver-cloud'
           image-name: 'massdriver'
@@ -47,13 +47,13 @@ jobs:
             latest
       # Uploads the bundle to Massdriver
       - name: Publish Bundle
-        uses: massdriver-cloud/actions/bundle_publish@v4
+        uses: massdriver-cloud/actions/bundle_publish@v5
         with:
           build-directory: ./bundle
       # Once the application is deployed on Massdriver, app_patch can be used to update bundle parameters.
       # Here, we're updating the image tag to the image we pushed in the `Push Image` step.
       - name: Set Image Version
-        uses: massdriver-cloud/actions/app_patch@v4
+        uses: massdriver-cloud/actions/app_patch@v5
         with:
           project: md
           env: prod
@@ -62,7 +62,7 @@ jobs:
             .image.tag = "${{github.sha}}"
       # Deploys the updated application
       - name: Deploy App
-        uses: massdriver-cloud/actions/app_deploy@v4
+        uses: massdriver-cloud/actions/app_deploy@v5
         with:
           project: md
           env: prod
@@ -125,7 +125,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions@v4
+        uses: massdriver-cloud/actions@v5
       - name: Use Massdriver CLI
         run: mass help
 ```
@@ -134,7 +134,7 @@ This will download the latest version of the Massdriver CLI. Optionally, a `tag`
 
 ```yaml
 - name: Install Massdriver CLI
-  uses: massdriver-cloud/actions/setup@v4
+  uses: massdriver-cloud/actions/setup@v5
   with:
     tag: 1.0.0
 ```
@@ -145,7 +145,7 @@ Deploys a configured application to Massdriver.
 
 ```yaml
 jobs:
-  publish:
+  deploy:
     runs-on: ubuntu-latest
     env:
       MASSDRIVER_API_KEY: ${{ secrets.MASSDRIVER_API_KEY }}
@@ -153,15 +153,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions@v4
+        uses: massdriver-cloud/actions@v5
       - name: Deploy App
-        uses: massdriver-cloud/actions/app_deploy@v4
+        uses: massdriver-cloud/actions/app_deploy@v5
         with:
           project: ecomm
           env: prod
           manifest: db
 ```
-
 
 ### App Patch
 
@@ -169,7 +168,7 @@ This action will patch the parameters of an existing application.
 
 ```yaml
 jobs:
-  publish:
+  patch:
     runs-on: ubuntu-latest
     env:
       MASSDRIVER_API_KEY: ${{ secrets.MASSDRIVER_API_KEY }}
@@ -177,9 +176,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions@v4
+        uses: massdriver-cloud/actions@v5
       - name: Patch App
-        uses: massdriver-cloud/actions/app_patch@v4
+        uses: massdriver-cloud/actions/app_patch@v5
         with:
           project: ecomm
           env: prod
@@ -203,9 +202,28 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions@v4
+        uses: massdriver-cloud/actions@v5
       - name: Publish Bundle
-        uses: massdriver-cloud/actions/bundle_publish@v4
+        uses: massdriver-cloud/actions/bundle_publish@v5
+```
+
+### Bundle Build
+
+Use this action to build schemas from massdriver.yaml:
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      MASSDRIVER_API_KEY: ${{ secrets.MASSDRIVER_API_KEY }}
+      MASSDRIVER_ORG_ID: ${{ vars.MASSDRIVER_ORG_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Massdriver CLI
+        uses: massdriver-cloud/actions@v5
+      - name: Build Bundle
+        uses: massdriver-cloud/actions/bundle_build@v5
 ```
 
 ### Image Push
@@ -214,7 +232,7 @@ Use this action to push an image, using the Massdriver CLI, to any of the suppor
 
 ```yaml
 jobs:
-  publish:
+  image_push:
     runs-on: ubuntu-latest
     env:
       MASSDRIVER_API_KEY: ${{ secrets.MASSDRIVER_API_KEY }}
@@ -222,9 +240,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions@v4
+        uses: massdriver-cloud/actions@v5
       - name: Push Image
-        uses: massdriver-cloud/actions/image_push@v4
+        uses: massdriver-cloud/actions/image_push@v5
         with:
           namespace: 'massdriver-cloud'
           image-name: 'massdriver'

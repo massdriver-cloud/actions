@@ -16,6 +16,10 @@ inputs:
     description: |
       The slug of the manifest to deploy. Can be found by hovering over the bundle in the Massdriver diagram UI.
     required: true
+  message:
+    description: |
+      The message associated with this deploy in Massdriver.
+    required: false
 runs:
-  using: 'node16'
+  using: node20
   main: '../dist/app_deploy/index.js'

@@ -33,7 +33,6 @@ inputs:
   image-tags:
     description: |
       Specify tags for the image.
-      Can specify multiple tags - one per line.
       Defaults to `latest`.
     required: false
     default: 'latest'
@@ -49,6 +48,11 @@ inputs:
       Defaults to `Dockerfile`.
     required: false
     default: 'Dockerfile'
+  skip-build:
+    description: |
+      Skip building the image before pushing.
+    required: false
+    default: false
 runs:
-  using: 'node16'
+  using: node20
   main: '../dist/image_push/index.js'

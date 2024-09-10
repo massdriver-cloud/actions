@@ -1,0 +1,12 @@
+name: 'Preview Deploy'
+description: 'Deploy a Preview Environment using Massdriver'
+author: 'Massdriver, Inc.'
+inputs:
+  params:
+    description: |
+      Path to the preview environment configuration file
+    required: false
+    default: './preview.json'
+runs:
+  using: node20
+  main: '../dist/preview_deploy/index.js'
