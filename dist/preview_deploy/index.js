@@ -25976,8 +25976,8 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const params = core.getInput("params");
     try {
         const command = `mass preview deploy`;
-        const flag = [`--params ${params}`];
-        yield exec.exec(command, flag);
+        const args = ['--params', params];
+        yield exec.exec(command, args);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
     catch (error) {
