@@ -30262,8 +30262,10 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         core.setFailed("No projectSlug found in params file");
         return;
     }
+    const envSlug = `${params.projectSlug}-${env}`;
+    core.info(`Attempting to decommission preview environment: ${envSlug}`);
     try {
-        const command = `mass preview decommission ${params.projectSlug}-${env}`;
+        const command = `mass preview decommission ${envSlug}`;
         yield exec.exec(command);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }

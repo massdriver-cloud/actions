@@ -33,8 +33,11 @@ const run = async (): Promise<void> => {
     return
   }
 
+  const envSlug = `${params.projectSlug}-${env}`
+  core.info(`Attempting to decommission preview environment: ${envSlug}`)
+  
   try {
-    const command = `mass preview decommission ${params.projectSlug}-${env}`
+    const command = `mass preview decommission ${envSlug}`
     await exec.exec(command)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
