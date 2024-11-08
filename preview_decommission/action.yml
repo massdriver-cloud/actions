@@ -2,13 +2,10 @@ name: 'Preview Decommission'
 description: 'Decommission a Massdriver Preview Environment'
 author: 'Massdriver, Inc.'
 inputs:
-  project:
-    description: |
-      The project from which to decommission a preview environment.
-    required: true
-  env:
-    description: |
-      The name of the environment to decommission.
+  params:
+    description: 'Path to the preview params JSON file'
+    required: false
+    default: './preview.json'
 runs:
   using: node20
   main: '../dist/preview_decommission/index.js'
