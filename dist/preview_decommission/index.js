@@ -30236,25 +30236,40 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const exec = __importStar(__nccwpck_require__(1514));
 const github = __importStar(__nccwpck_require__(5438));
+const fs = __importStar(__nccwpck_require__(7147));
+const path = __importStar(__nccwpck_require__(1017));
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const project = core.getInput("project");
-    // Get env from input or default to PR number prefixed with 'p'
-    const env = core.getInput("env") ||
-        (((_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.number) ? `p${github.context.payload.pull_request.number}` : '');
-    if (!env) {
-        core.setFailed("No environment specified and no pull request number found");
+    // Get PR number and create env with 'p' prefix
+    const prNumber = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.number;
+    if (!prNumber) {
+        core.setFailed("No pull request number found");
+        return;
+    }
+    const env = `p${prNumber}`;
+    // Read and parse the params file
+    const paramsPath = core.getInput("params");
+    let params;
+    try {
+        const fileContent = fs.readFileSync(path.resolve(paramsPath), 'utf8');
+        params = JSON.parse(fileContent);
+    }
+    catch (error) {
+        core.setFailed(`Failed to read or parse params file at ${paramsPath}: ${error}`);
+        return;
+    }
+    if (!params.projectSlug) {
+        core.setFailed("No projectSlug found in params file");
         return;
     }
     try {
-        const command = `mass preview decommission ${project}-${env}`;
+        const command = `mass preview decommission ${params.projectSlug}-${env}`;
         yield exec.exec(command);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
     catch (error) {
         core.setFailed(error.message);
     }
-    return;
 });
 run();
 exports["default"] = run;
