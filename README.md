@@ -282,9 +282,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions@v5
+        uses: massdriver-cloud/actions@v5.1
       - name: Deploy Preview
-        uses: massdriver-cloud/actions/preview_deploy@v5
+        uses: massdriver-cloud/actions/preview_deploy@v5.1
         with:
           params: './preview.json'
 ```
@@ -303,9 +303,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions@v5
+        uses: massdriver-cloud/actions@v5.1
       - name: Decommission Preview
-        uses: massdriver-cloud/actions/preview_decommission@v5
+        uses: massdriver-cloud/actions/preview_decommission@v5.1
         with:
           params: './preview.json'
 ```
