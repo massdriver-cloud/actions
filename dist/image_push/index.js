@@ -2971,7 +2971,7 @@ class HttpClient {
         if (this._keepAlive && useProxy) {
             agent = this._proxyAgent;
         }
-        if (this._keepAlive && !useProxy) {
+        if (!useProxy) {
             agent = this._agent;
         }
         // if agent is already assigned use that agent.
@@ -3003,15 +3003,11 @@ class HttpClient {
             agent = tunnelAgent(agentOptions);
             this._proxyAgent = agent;
         }
-        // if reusing agent across request and tunneling agent isn't assigned create a new agent
-        if (this._keepAlive && !agent) {
+        // if tunneling agent isn't assigned create a new agent
+        if (!agent) {
             const options = { keepAlive: this._keepAlive, maxSockets };
             agent = usingSsl ? new https.Agent(options) : new http.Agent(options);
             this._agent = agent;
-        }
-        // if not using private agent and tunnel agent isn't setup then use global agent
-        if (!agent) {
-            agent = usingSsl ? https.globalAgent : http.globalAgent;
         }
         if (usingSsl && this._ignoreSslError) {
             // we don't want to set NODE_TLS_REJECT_UNAUTHORIZED=0 since that will affect request for entire process
@@ -3754,11 +3750,21 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Util = void 0;
+const crypto_1 = __importDefault(__nccwpck_require__(6113));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const core = __importStar(__nccwpck_require__(2186));
 const io = __importStar(__nccwpck_require__(7436));
@@ -3775,21 +3781,21 @@ class Util {
         const records = (0, sync_1.parse)(input, {
             columns: false,
             relaxQuotes: true,
-            comment: opts?.comment,
+            comment: opts === null || opts === void 0 ? void 0 : opts.comment,
             relaxColumnCount: true,
             skipEmptyLines: true,
-            quote: opts?.quote
+            quote: opts === null || opts === void 0 ? void 0 : opts.quote
         });
         for (const record of records) {
             if (record.length == 1) {
-                if (opts?.ignoreComma) {
+                if (opts === null || opts === void 0 ? void 0 : opts.ignoreComma) {
                     res.push(record[0]);
                 }
                 else {
                     res.push(...record[0].split(','));
                 }
             }
-            else if (!opts?.ignoreComma) {
+            else if (!(opts === null || opts === void 0 ? void 0 : opts.ignoreComma)) {
                 res.push(...record);
             }
             else {
@@ -3798,10 +3804,12 @@ class Util {
         }
         return res.filter(item => item).map(pat => pat.trim());
     }
-    static async asyncForEach(array, callback) {
-        for (let index = 0; index < array.length; index++) {
-            await callback(array[index], index, array);
-        }
+    static asyncForEach(array, callback) {
+        return __awaiter(this, void 0, void 0, function* () {
+            for (let index = 0; index < array.length; index++) {
+                yield callback(array[index], index, array);
+            }
+        });
     }
     static isValidURL(urlStr) {
         let url;
@@ -3824,19 +3832,21 @@ class Util {
         }
         return false;
     }
-    static async powershellCommand(script, params) {
-        const powershellPath = await io.which('powershell', true);
-        const escapedScript = script.replace(/'/g, "''").replace(/"|\n|\r/g, '');
-        const escapedParams = [];
-        if (params) {
-            for (const key in params) {
-                escapedParams.push(`-${key} '${params[key].replace(/'/g, "''").replace(/"|\n|\r/g, '')}'`);
+    static powershellCommand(script, params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const powershellPath = yield io.which('powershell', true);
+            const escapedScript = script.replace(/'/g, "''").replace(/"|\n|\r/g, '');
+            const escapedParams = [];
+            if (params) {
+                for (const key in params) {
+                    escapedParams.push(`-${key} '${params[key].replace(/'/g, "''").replace(/"|\n|\r/g, '')}'`);
+                }
             }
-        }
-        return {
-            command: `"${powershellPath}"`,
-            args: ['-NoLogo', '-Sta', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Unrestricted', '-Command', `& '${escapedScript}' ${escapedParams.join(' ')}`]
-        };
+            return {
+                command: `"${powershellPath}"`,
+                args: ['-NoLogo', '-Sta', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Unrestricted', '-Command', `& '${escapedScript}' ${escapedParams.join(' ')}`]
+            };
+        });
     }
     static isDirectory(p) {
         try {
@@ -3869,6 +3879,42 @@ class Util {
     }
     static sleep(seconds) {
         return new Promise(resolve => setTimeout(resolve, seconds * 1000));
+    }
+    static hash(input) {
+        return crypto_1.default.createHash('sha256').update(input).digest('hex');
+    }
+    // https://github.com/golang/go/blob/f6b93a4c358b28b350dd8fe1780c1f78e520c09c/src/strconv/atob.go#L7-L18
+    static parseBool(str) {
+        switch (str) {
+            case '1':
+            case 't':
+            case 'T':
+            case 'true':
+            case 'TRUE':
+            case 'True':
+                return true;
+            case '0':
+            case 'f':
+            case 'F':
+            case 'false':
+            case 'FALSE':
+            case 'False':
+                return false;
+            default:
+                throw new Error(`parseBool syntax error: ${str}`);
+        }
+    }
+    static formatFileSize(bytes) {
+        if (bytes === 0)
+            return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    static generateRandomString(length = 10) {
+        const bytes = crypto_1.default.randomBytes(Math.ceil(length / 2));
+        return bytes.toString('hex').slice(0, length);
     }
 }
 exports.Util = Util;
@@ -28477,6 +28523,13 @@ const normalize_options = function(opts){
       `got ${JSON.stringify(options.on_record)}`
     ], options);
   }
+  // Normalize option `on_skip`
+  // options.on_skip ??= (err, chunk) => {
+  //   this.emit('skip', err, chunk);
+  // };
+  if(options.on_skip !== undefined && options.on_skip !== null && typeof options.on_skip !== 'function'){
+    throw new Error(`Invalid Option: on_skip must be a function, got ${JSON.stringify(options.on_skip)}`);
+  }
   // Normalize option `quote`
   if(options.quote === null || options.quote === false || options.quote === ''){
     options.quote = null;
@@ -28893,10 +28946,12 @@ const transform = function(original_options = {}) {
             if(this.state.commenting){
               continue;
             }
-            const commentCount = comment === null ? 0 : this.__compareBytes(comment, buf, pos, chr);
-            if(commentCount !== 0 && (comment_no_infix === false || this.state.field.length === 0)){
-              this.state.commenting = true;
-              continue;
+            if(comment !== null && (comment_no_infix === false || (this.state.record.length === 0 && this.state.field.length === 0))) {
+              const commentCount = this.__compareBytes(comment, buf, pos, chr);
+              if(commentCount !== 0){
+                this.state.commenting = true;
+                continue;
+              }
             }
             const delimiterLength = this.__isDelimiter(buf, pos, chr);
             if(delimiterLength !== 0){
