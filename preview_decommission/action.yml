@@ -1,5 +1,6 @@
-name: 'Massdriver Preview Environment Decommission'
-description: 'Decommission a Massdriver preview environment'
+name: 'Preview Decommission'
+description: 'Decommission a Massdriver Preview Environment'
+author: 'Massdriver, Inc.'
 inputs:
   params:
     description: 'Path to the preview params JSON file'
