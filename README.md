@@ -249,3 +249,63 @@ jobs:
           artifact: ${{ vars.MASSDRIVER_ARTIFACT_ID }}
           region: 'us-west-2'
 ```
+
+### Preview Deploy
+
+Before setting up preview environments, you'll need to initialize your git repo with a `preview.json` file.
+
+```shell
+mass preview init
+```
+
+Make any edits to params that you need to set for your preview environment. This file supports interpolation of GH environment variables.
+
+Add the file to your repo and commit it:
+
+```shell
+git add preview.json
+git commit -m "Add preview.json"
+git push
+```
+
+[Learn more about preview environments.](https://docs.massdriver.cloud/cli/commands/mass_preview)
+
+Use this action to deploy preview environments for pull requests:
+
+```yaml
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    env:
+      MASSDRIVER_API_KEY: ${{ secrets.MASSDRIVER_API_KEY }}
+      MASSDRIVER_ORG_ID: ${{ vars.MASSDRIVER_ORG_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Massdriver CLI
+        uses: massdriver-cloud/actions@v5
+      - name: Deploy Preview
+        uses: massdriver-cloud/actions/preview_deploy@v5
+        with:
+          params: './preview.json'
+```
+
+### Preview Decommission
+
+Use this action to decommission preview environments when pull requests are closed:
+
+```yaml
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    env:
+      MASSDRIVER_API_KEY: ${{ secrets.MASSDRIVER_API_KEY }}
+      MASSDRIVER_ORG_ID: ${{ vars.MASSDRIVER_ORG_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Massdriver CLI
+        uses: massdriver-cloud/actions@v5
+      - name: Decommission Preview
+        uses: massdriver-cloud/actions/preview_decommission@v5
+        with:
+          params: './preview.json'
+```
