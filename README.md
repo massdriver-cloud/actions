@@ -29,7 +29,7 @@ jobs:
       # Sets up the Massdriver CLI on the runner.
       - name: Install Massdriver CLI
         uses: massdriver-cloud/actions/setup@v5
-      # Set up a container registry, 
+      # Set up a container registry,
       - name: Push Image
         uses: massdriver-cloud/actions/image_push@v5
         with:
@@ -308,4 +308,25 @@ jobs:
         uses: massdriver-cloud/actions/preview_decommission@v5.1
         with:
           params: './preview.json'
+```
+
+### Definition Publish
+
+Use this action to publish a Massdriver Artifact Definition.
+
+```yaml
+jobs:
+  definition_publish:
+    runs-on: ubuntu-latest
+    env:
+      MASSDRIVER_API_KEY: ${{ secrets.MASSDRIVER_API_KEY }}
+      MASSDRIVER_ORG_ID: ${{ vars.MASSDRIVER_ORG_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Massdriver CLI
+        uses: massdriver-cloud/actions@v5.1
+      - name: Publish Definition
+        uses: massdriver-cloud/actions/definition_publish@v5.1
+        with:
+          file: './path/to/definition.json'
 ```
