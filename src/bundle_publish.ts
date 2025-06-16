@@ -6,7 +6,7 @@ const run = async (): Promise<void> => {
 
   try {
     const command = `mass bundle publish`
-    const args = [`--bundle-directory`, buildDirectory]
+    const args = [`--build-directory`, buildDirectory]
     await exec.exec(command, args)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {

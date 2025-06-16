@@ -6,7 +6,7 @@ const run = async (): Promise<void> => {
 
   try {
     const command = `mass bundle build`
-    const args = [`--bundle-directory`, buildDirectory]
+    const args = [`--build-directory`, buildDirectory]
     await exec.exec(command, args)
   } catch (error: any) {
     core.setFailed(error.message)
