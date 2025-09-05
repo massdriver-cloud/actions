@@ -3,15 +3,22 @@ description: 'Publishes a bundle to Massdriver'
 author: 'Massdriver, Inc.'
 inputs:
   build-directory:
-    description: |
-      Path to a directory containing a massdriver.yaml file.
+    description: Path to a directory containing a massdriver.yaml file.
     required: false
     default: '.'
   access:
-    description: |
-      Access level of bundle once published
+    description: Access level of bundle once published
     required: false
     default: 'private'
+    deprecationMessage: 'The access input is deprecated and will be removed in a future release. All bundles are published as private.'
+  skip-lint:
+    description: 'Skip linting the bundle before publishing'
+    required: false
+    default: 'false'
+  fail-warnings:
+    description: 'Fail the publish if lint produces warnings'
+    required: false
+    default: 'false'
 runs:
   using: node20
   main: '../dist/bundle_publish/index.js'

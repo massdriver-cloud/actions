@@ -19,8 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v4
+        uses: massdriver-cloud/actions/setup@v5
       - name: Publish Bundle
-        uses: massdriver-cloud/actions/bundle_publish@v4
+        uses: massdriver-cloud/actions/bundle_publish@v5
         with:
           build-directory: ${{env.BUNDLE_FOLDER}}
