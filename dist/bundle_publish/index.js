@@ -25974,10 +25974,17 @@ const core = __importStar(__nccwpck_require__(2186));
 const exec = __importStar(__nccwpck_require__(1514));
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const buildDirectory = core.getInput("build-directory", { required: false });
-    const access = core.getInput("access", { required: false });
+    const failWarnings = core.getInput("fail-warnings") === "true";
+    const skipLint = core.getInput("skip-lint") === "true";
     try {
         const command = `mass bundle publish`;
-        const args = [`--build-directory`, buildDirectory, `--access`, access];
+        const args = [`--build-directory`, buildDirectory];
+        if (failWarnings) {
+            args.push(`--fail-warnings`);
+        }
+        if (skipLint) {
+            args.push(`--skip-lint`);
+        }
         yield exec.exec(command, args);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
