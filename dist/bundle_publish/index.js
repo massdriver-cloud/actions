@@ -25972,11 +25972,58 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const exec = __importStar(__nccwpck_require__(1514));
+/**
+ * Check if there are any changes in the specified directory
+ * This checks both staged/unstaged changes and untracked files
+ */
+const hasChangesInDirectory = (directory) => __awaiter(void 0, void 0, void 0, function* () {
+    let hasChanges = false;
+    // Check for tracked changes (staged and unstaged)
+    const diffExitCode = yield exec.exec("git", ["diff", "--quiet", "HEAD", "--", directory], {
+        ignoreReturnCode: true,
+        silent: true,
+        listeners: {
+            stdout: () => {
+                hasChanges = true;
+            },
+            stderr: () => {
+                hasChanges = true;
+            }
+        }
+    });
+    // If diff returned non-zero exit code, there are changes
+    if (diffExitCode !== 0) {
+        return true;
+    }
+    // Check for untracked files in the directory
+    let untrackedOutput = "";
+    yield exec.exec("git", ["ls-files", "--others", "--exclude-standard", directory], {
+        silent: true,
+        listeners: {
+            stdout: (data) => {
+                untrackedOutput += data.toString();
+            }
+        }
+    });
+    // If there's any output, there are untracked files
+    if (untrackedOutput.trim().length > 0) {
+        return true;
+    }
+    return hasChanges;
+});
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const buildDirectory = core.getInput("build-directory", { required: false });
     const failWarnings = core.getInput("fail-warnings") === "true";
     const skipLint = core.getInput("skip-lint") === "true";
+    const development = core.getInput("development") === "true";
     try {
+        // Check if there are changes in the build directory
+        // If not, skip publishing (NOOP for immutable registry)
+        const hasChanges = yield hasChangesInDirectory(buildDirectory);
+        if (!hasChanges) {
+            core.info(`No changes detected in ${buildDirectory}. Skipping publish due to immutable registry.`);
+            return;
+        }
         const command = `mass bundle publish`;
         const args = [`--build-directory`, buildDirectory];
         if (failWarnings) {
@@ -25984,6 +26031,9 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         }
         if (skipLint) {
             args.push(`--skip-lint`);
+        }
+        if (development) {
+            args.push(`--development`);
         }
         yield exec.exec(command, args);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
