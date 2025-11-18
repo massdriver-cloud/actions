@@ -19,6 +19,10 @@ inputs:
     description: 'Fail the publish if lint produces warnings'
     required: false
     default: 'false'
+  development:
+    description: 'Publish bundle as a development version'
+    required: false
+    default: 'false'
 runs:
   using: node20
   main: '../dist/bundle_publish/index.js'
