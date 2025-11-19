@@ -254,6 +254,8 @@ jobs:
 
 This workflow publishes a development version of your bundle whenever a pull request is opened or updated. These development versions can be deployed to test environments in Massdriver, allowing you to validate infrastructure changes with actual cloud resources as part of your continuous integration strategy.
 
+Learn more about [rapid infrastructure testing with development releases](https://docs.massdriver.cloud/concepts/versions#rapid-infrastructure-testing).
+
 #### Additional Options
 
 The bundle publish action supports additional configuration options:
