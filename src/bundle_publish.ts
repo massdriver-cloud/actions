@@ -11,37 +11,73 @@ const hasChangesInDirectory = async (
   core.info(`====== [hasChanges] START ======`)
   core.info(`[hasChanges] Checking for changes in directory: ${directory}`)
   
-  // Use git log to get files changed in HEAD commit - works with shallow clones
-  core.info(`[hasChanges] Running: git log --format="" --name-only -1 HEAD -- ${directory}`)
-  
+  // Check if HEAD~1 (parent commit) exists
+  core.info(`[hasChanges] Checking if HEAD~1 exists...`)
+  const parentExitCode = await exec.exec(
+    "git",
+    ["rev-parse", "--verify", "HEAD~1"],
+    {
+      ignoreReturnCode: true,
+      silent: true
+    }
+  )
+
+  if (parentExitCode !== 0) {
+    core.info(`[hasChanges] HEAD~1 not found, fetching parent commit...`)
+    // Try to fetch the parent commit (handles shallow clones)
+    await exec.exec(
+      "git",
+      ["fetch", "--depth=2"],
+      {
+        ignoreReturnCode: true
+      }
+    )
+    
+    // Check again if we now have HEAD~1
+    const retryParentExitCode = await exec.exec(
+      "git",
+      ["rev-parse", "--verify", "HEAD~1"],
+      {
+        ignoreReturnCode: true,
+        silent: true
+      }
+    )
+    
+    if (retryParentExitCode !== 0) {
+      core.info(`[hasChanges] ✓ Still no parent commit (first commit in repo), publishing`)
+      core.info(`====== [hasChanges] END ======`)
+      return true
+    }
+    core.info(`[hasChanges] Successfully fetched parent commit`)
+  }
+
+  // Compare HEAD with HEAD~1 to see what changed
+  core.info(`[hasChanges] Comparing HEAD~1 vs HEAD in ${directory}...`)
   let changedFiles = ""
   await exec.exec(
     "git",
-    ["log", "--format=", "--name-only", "-1", "HEAD", "--", directory],
+    ["diff", "--name-only", "HEAD~1", "HEAD", "--", directory],
     {
       ignoreReturnCode: true,
       listeners: {
         stdout: (data: Buffer) => {
           changedFiles += data.toString()
-        },
-        stderr: (data: Buffer) => {
-          core.info(`[hasChanges] git stderr: ${data.toString()}`)
         }
       }
     }
   )
 
-  core.info(`[hasChanges] Raw output length: ${changedFiles.length}`)
-  core.info(`[hasChanges] Raw output (first 200 chars): ${changedFiles.substring(0, 200)}`)
+  core.info(`[hasChanges] Changed files output: ${changedFiles.trim() || '(none)'}`)
   
   // Check if any files were returned
   if (changedFiles.trim().length > 0) {
     const fileCount = changedFiles.trim().split('\n').length
-    core.info(`[hasChanges] ✓ Found ${fileCount} changed file(s) in ${directory} in HEAD commit`)
+    core.info(`[hasChanges] ✓ Found ${fileCount} changed file(s) in ${directory}`)
+    core.info(`====== [hasChanges] END ======`)
     return true
   }
 
-  core.info(`[hasChanges] ✗ No changes detected in ${directory} in HEAD commit`)
+  core.info(`[hasChanges] ✗ No changes detected in ${directory}`)
   core.info(`====== [hasChanges] END ======`)
   return false
 }
