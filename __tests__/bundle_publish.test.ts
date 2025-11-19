@@ -28,35 +28,27 @@ describe("bundle_publish", () => {
   })
 
   describe("hasChangesInDirectory", () => {
-    it("should return true when directory has changes in HEAD commit", async () => {
+    it("should return true when HEAD~1 does not exist", async () => {
       mockedExec.exec
-        .mockImplementationOnce(async (cmd, args, options) => {
-          // git log returns changed files
-          if (options?.listeners?.stdout) {
-            options.listeners.stdout(Buffer.from("test-bundle/massdriver.yaml\ntest-bundle/src/main.tf\n"))
-          }
-          return 0
-        })
+        .mockResolvedValueOnce(1) // first rev-parse HEAD~1 fails
+        .mockResolvedValueOnce(0) // git fetch --depth=2
+        .mockResolvedValueOnce(1) // second rev-parse HEAD~1 still fails (first commit)
         .mockResolvedValueOnce(0) // mass bundle publish
 
       await bundlePublish()
 
-      // Verify git log was called to check HEAD commit
+      // Verify fetch was attempted
       expect(mockedExec.exec).toHaveBeenCalledWith(
         "git",
-        ["log", "--format=", "--name-only", "-1", "HEAD", "--", "test-bundle"],
+        ["fetch", "--depth=2"],
         expect.objectContaining({
-          ignoreReturnCode: true,
-          listeners: expect.objectContaining({
-            stdout: expect.any(Function),
-            stderr: expect.any(Function)
-          })
+          ignoreReturnCode: true
         })
       )
 
-      // Should have logged changed files count
+      // Should have logged no parent after fetch
       expect(mockedCore.info).toHaveBeenCalledWith(
-        "[hasChanges] ✓ Found 2 changed file(s) in test-bundle in HEAD commit"
+        "[hasChanges] ✓ Still no parent commit (first commit in repo), publishing"
       )
 
       // Should attempt to publish
@@ -66,10 +58,80 @@ describe("bundle_publish", () => {
       )
     })
 
-    it("should skip publish when no changes detected in HEAD commit", async () => {
+    it("should fetch parent and detect changes when HEAD~1 missing initially", async () => {
       mockedExec.exec
+        .mockResolvedValueOnce(1) // first rev-parse HEAD~1 fails (shallow clone)
+        .mockResolvedValueOnce(0) // git fetch --depth=2
+        .mockResolvedValueOnce(0) // second rev-parse HEAD~1 succeeds
         .mockImplementationOnce(async (cmd, args, options) => {
-          // git log returns no files (empty output)
+          // git diff returns changed files
+          if (options?.listeners?.stdout) {
+            options.listeners.stdout(Buffer.from("test-bundle/massdriver.yaml\n"))
+          }
+          return 0
+        })
+        .mockResolvedValueOnce(0) // mass bundle publish
+
+      await bundlePublish()
+
+      // Verify fetch was attempted
+      expect(mockedExec.exec).toHaveBeenCalledWith(
+        "git",
+        ["fetch", "--depth=2"],
+        expect.objectContaining({
+          ignoreReturnCode: true
+        })
+      )
+
+      // Should have detected changes
+      expect(mockedCore.info).toHaveBeenCalledWith(
+        "[hasChanges] ✓ Found 1 changed file(s) in test-bundle"
+      )
+    })
+
+    it("should return true when directory has changes between HEAD~1 and HEAD", async () => {
+      mockedExec.exec
+        .mockResolvedValueOnce(0) // rev-parse HEAD~1 succeeds
+        .mockImplementationOnce(async (cmd, args, options) => {
+          // git diff returns changed files
+          if (options?.listeners?.stdout) {
+            options.listeners.stdout(Buffer.from("test-bundle/massdriver.yaml\ntest-bundle/src/main.tf\n"))
+          }
+          return 0
+        })
+        .mockResolvedValueOnce(0) // mass bundle publish
+
+      await bundlePublish()
+
+      // Verify git diff was called
+      expect(mockedExec.exec).toHaveBeenCalledWith(
+        "git",
+        ["diff", "--name-only", "HEAD~1", "HEAD", "--", "test-bundle"],
+        expect.objectContaining({
+          ignoreReturnCode: true,
+          listeners: expect.objectContaining({
+            stdout: expect.any(Function)
+          })
+        })
+      )
+
+      // Should have logged changed files count
+      expect(mockedCore.info).toHaveBeenCalledWith(
+        "[hasChanges] ✓ Found 2 changed file(s) in test-bundle"
+      )
+
+      // Should attempt to publish
+      expect(mockedExec.exec).toHaveBeenCalledWith(
+        "mass bundle publish",
+        ["--build-directory", "test-bundle"]
+      )
+    })
+
+    it("should skip publish when no changes detected between HEAD~1 and HEAD", async () => {
+      mockedExec.exec
+        .mockResolvedValueOnce(0) // rev-parse HEAD~1 succeeds
+        .mockImplementationOnce(async (cmd, args, options) => {
+          // git diff returns no files (empty output)
           if (options?.listeners?.stdout) {
             options.listeners.stdout(Buffer.from(""))
           }
@@ -80,7 +142,7 @@ describe("bundle_publish", () => {
 
       // Should have logged no changes
       expect(mockedCore.info).toHaveBeenCalledWith(
-        "[hasChanges] ✗ No changes detected in test-bundle in HEAD commit"
+        "[hasChanges] ✗ No changes detected in test-bundle"
       )
       expect(mockedCore.info).toHaveBeenCalledWith(
         "No changes detected in test-bundle. Skipping publish due to immutable registry."
@@ -105,13 +167,7 @@ describe("bundle_publish", () => {
       })
 
       mockedExec.exec
-        .mockImplementationOnce(async (cmd, args, options) => {
-          // diff-tree returns changes
-          if (options?.listeners?.stdout) {
-            options.listeners.stdout(Buffer.from("my-bundle/massdriver.yaml\n"))
-          }
-          return 0
-        })
+        .mockResolvedValueOnce(1) // rev-parse HEAD~1 fails (no parent)
         .mockResolvedValueOnce(0) // mass bundle publish
 
       await bundlePublish()
