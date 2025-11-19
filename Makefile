@@ -22,15 +22,25 @@ test:
 .PHONY: release
 release:
 	@if [ -z "$(VERSION)" ]; then \
-		echo "Error: VERSION is required. Usage: make release VERSION=v5.3.4"; \
+		echo "Error: VERSION is required. Usage: make release VERSION=5.3.4"; \
 		exit 1; \
 	fi
-	@echo "Tagging release $(VERSION)..."
-	@git tag $(VERSION)
-	@git push origin $(VERSION)
-	@MAJOR=$$(echo $(VERSION) | grep -oE '^v[0-9]+'); \
+	@TAG=$(VERSION); \
+	if [[ ! $$TAG =~ ^v ]]; then \
+		TAG="v$$TAG"; \
+	fi; \
+	echo "Tagging release $$TAG..."; \
+	git tag $$TAG; \
+	git push origin $$TAG; \
+	MAJOR=$$(echo $$TAG | grep -oE '^v[0-9]+'); \
 	echo "Updating major version tag $$MAJOR..."; \
 	git tag -d $$MAJOR 2>/dev/null || true; \
 	git tag $$MAJOR; \
-	git push origin $$MAJOR --force
-	@echo "✓ Released $(VERSION) and updated major version tag"
+	git push origin $$MAJOR --force; \
+	if command -v gh >/dev/null 2>&1; then \
+		echo "Creating GitHub release for $$TAG..."; \
+		gh release create $$TAG --title "$$TAG" --generate-notes || echo "⚠ Failed to create GitHub release (may already exist)"; \
+	else \
+		echo "⚠ GitHub CLI (gh) not installed, skipping release creation"; \
+	fi; \
+	echo "✓ Released $$TAG and updated $$MAJOR"
