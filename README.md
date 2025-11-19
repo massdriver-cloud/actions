@@ -213,6 +213,8 @@ The Massdriver bundle registry is immutable per the `version:` field in your `ma
 
 To optimize CI/CD performance, this action will automatically skip publishing if no changes are detected in the directory containing the `massdriver.yaml` file. This change detection is based on actual file modifications (not just the version field) because development builds auto-generate a `-dev.SUFFIX` on the version currently in the `massdriver.yaml` file.
 
+For more information about versioning and release strategies, see the [Versions documentation](https://docs.massdriver.cloud/concepts/versions).
+
 #### Development Builds
 
 For development workflows, you can publish bundles with auto-generated version suffixes using the `development` flag:
