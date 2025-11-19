@@ -31,7 +31,7 @@ describe("bundle_publish", () => {
     it("should return true when directory has changes in HEAD commit", async () => {
       mockedExec.exec
         .mockImplementationOnce(async (cmd, args, options) => {
-          // diff-tree returns changed files
+          // git log returns changed files
           if (options?.listeners?.stdout) {
             options.listeners.stdout(Buffer.from("test-bundle/massdriver.yaml\ntest-bundle/src/main.tf\n"))
           }
@@ -41,15 +41,15 @@ describe("bundle_publish", () => {
 
       await bundlePublish()
 
-      // Verify diff-tree was called to check HEAD commit
+      // Verify git log was called to check HEAD commit
       expect(mockedExec.exec).toHaveBeenCalledWith(
         "git",
-        ["diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD", "--", "test-bundle"],
+        ["log", "--format=", "--name-only", "-1", "HEAD", "--", "test-bundle"],
         expect.objectContaining({
           ignoreReturnCode: true,
-          silent: true,
           listeners: expect.objectContaining({
-            stdout: expect.any(Function)
+            stdout: expect.any(Function),
+            stderr: expect.any(Function)
           })
         })
       )
@@ -69,7 +69,7 @@ describe("bundle_publish", () => {
     it("should skip publish when no changes detected in HEAD commit", async () => {
       mockedExec.exec
         .mockImplementationOnce(async (cmd, args, options) => {
-          // diff-tree returns no files (empty output)
+          // git log returns no files (empty output)
           if (options?.listeners?.stdout) {
             options.listeners.stdout(Buffer.from(""))
           }

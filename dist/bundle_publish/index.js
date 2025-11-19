@@ -25698,27 +25698,32 @@ const exec = __importStar(__nccwpck_require__(5236));
  * This checks both staged/unstaged changes and untracked files
  */
 const hasChangesInDirectory = (directory) => __awaiter(void 0, void 0, void 0, function* () {
+    core.info(`====== [hasChanges] START ======`);
     core.info(`[hasChanges] Checking for changes in directory: ${directory}`);
-    // Check what files changed in the current commit (HEAD)
-    // This works even with shallow clones (fetch-depth: 1)
-    core.info(`[hasChanges] Checking files changed in HEAD commit in ${directory}...`);
+    // Use git log to get files changed in HEAD commit - works with shallow clones
+    core.info(`[hasChanges] Running: git log --format="" --name-only -1 HEAD -- ${directory}`);
     let changedFiles = "";
-    const diffTreeExitCode = yield exec.exec("git", ["diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD", "--", directory], {
+    yield exec.exec("git", ["log", "--format=", "--name-only", "-1", "HEAD", "--", directory], {
         ignoreReturnCode: true,
-        silent: true,
         listeners: {
             stdout: (data) => {
                 changedFiles += data.toString();
+            },
+            stderr: (data) => {
+                core.info(`[hasChanges] git stderr: ${data.toString()}`);
             }
         }
     });
-    // diff-tree returns 0 even if no files changed, so check the output
+    core.info(`[hasChanges] Raw output length: ${changedFiles.length}`);
+    core.info(`[hasChanges] Raw output (first 200 chars): ${changedFiles.substring(0, 200)}`);
+    // Check if any files were returned
     if (changedFiles.trim().length > 0) {
         const fileCount = changedFiles.trim().split('\n').length;
         core.info(`[hasChanges] ✓ Found ${fileCount} changed file(s) in ${directory} in HEAD commit`);
         return true;
     }
     core.info(`[hasChanges] ✗ No changes detected in ${directory} in HEAD commit`);
+    core.info(`====== [hasChanges] END ======`);
     return false;
 });
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
