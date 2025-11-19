@@ -25698,39 +25698,27 @@ const exec = __importStar(__nccwpck_require__(5236));
  * This checks both staged/unstaged changes and untracked files
  */
 const hasChangesInDirectory = (directory) => __awaiter(void 0, void 0, void 0, function* () {
-    // First, check if directory exists in the current HEAD
-    const lsTreeExitCode = yield exec.exec("git", ["ls-tree", "-d", "HEAD", directory], {
+    core.info(`[hasChanges] Checking for changes in directory: ${directory}`);
+    // Check what files changed in the current commit (HEAD)
+    // This works even with shallow clones (fetch-depth: 1)
+    core.info(`[hasChanges] Checking files changed in HEAD commit in ${directory}...`);
+    let changedFiles = "";
+    const diffTreeExitCode = yield exec.exec("git", ["diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD", "--", directory], {
         ignoreReturnCode: true,
-        silent: true
-    });
-    // If directory doesn't exist in HEAD, it's a new directory with changes
-    if (lsTreeExitCode !== 0) {
-        core.info(`Directory ${directory} is new (not in HEAD), treating as having changes`);
-        return true;
-    }
-    // Check for tracked changes (staged and unstaged)
-    const diffExitCode = yield exec.exec("git", ["diff", "--quiet", "HEAD", "--", directory], {
-        ignoreReturnCode: true,
-        silent: true
-    });
-    // If diff returned non-zero exit code, there are changes
-    if (diffExitCode !== 0) {
-        return true;
-    }
-    // Check for untracked files in the directory
-    let untrackedOutput = "";
-    yield exec.exec("git", ["ls-files", "--others", "--exclude-standard", directory], {
         silent: true,
         listeners: {
             stdout: (data) => {
-                untrackedOutput += data.toString();
+                changedFiles += data.toString();
             }
         }
     });
-    // If there's any output, there are untracked files
-    if (untrackedOutput.trim().length > 0) {
+    // diff-tree returns 0 even if no files changed, so check the output
+    if (changedFiles.trim().length > 0) {
+        const fileCount = changedFiles.trim().split('\n').length;
+        core.info(`[hasChanges] ✓ Found ${fileCount} changed file(s) in ${directory} in HEAD commit`);
         return true;
     }
+    core.info(`[hasChanges] ✗ No changes detected in ${directory} in HEAD commit`);
     return false;
 });
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
