@@ -1,10 +1,7 @@
 SHELL := /bin/bash
 
 .PHONY: setup
-setup:
-	@echo "Setting up..."
-	@npm install
-	@npx jest --clearCache
+setup: install test build
 
 .PHONY: install
 install:
@@ -21,8 +18,3 @@ test:
 	@echo "Running tests..."
 	@npx jest --clearCache
 	@npx jest --no-coverage
-
-.PHONY: test-bundle-publish
-test-bundle-publish:
-	@echo "Running bundle_publish tests..."
-	@npx jest __tests__/bundle_publish.test.ts --no-coverage
