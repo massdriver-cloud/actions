@@ -25698,19 +25698,20 @@ const exec = __importStar(__nccwpck_require__(5236));
  * This checks both staged/unstaged changes and untracked files
  */
 const hasChangesInDirectory = (directory) => __awaiter(void 0, void 0, void 0, function* () {
-    let hasChanges = false;
+    // First, check if directory exists in the current HEAD
+    const lsTreeExitCode = yield exec.exec("git", ["ls-tree", "-d", "HEAD", directory], {
+        ignoreReturnCode: true,
+        silent: true
+    });
+    // If directory doesn't exist in HEAD, it's a new directory with changes
+    if (lsTreeExitCode !== 0) {
+        core.info(`Directory ${directory} is new (not in HEAD), treating as having changes`);
+        return true;
+    }
     // Check for tracked changes (staged and unstaged)
     const diffExitCode = yield exec.exec("git", ["diff", "--quiet", "HEAD", "--", directory], {
         ignoreReturnCode: true,
-        silent: true,
-        listeners: {
-            stdout: () => {
-                hasChanges = true;
-            },
-            stderr: () => {
-                hasChanges = true;
-            }
-        }
+        silent: true
     });
     // If diff returned non-zero exit code, there are changes
     if (diffExitCode !== 0) {
@@ -25730,7 +25731,7 @@ const hasChangesInDirectory = (directory) => __awaiter(void 0, void 0, void 0, f
     if (untrackedOutput.trim().length > 0) {
         return true;
     }
-    return hasChanges;
+    return false;
 });
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const buildDirectory = core.getInput("build-directory", { required: false });

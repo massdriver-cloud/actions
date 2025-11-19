@@ -8,7 +8,21 @@ import * as exec from "@actions/exec"
 const hasChangesInDirectory = async (
   directory: string
 ): Promise<boolean> => {
-  let hasChanges = false
+  // First, check if directory exists in the current HEAD
+  const lsTreeExitCode = await exec.exec(
+    "git",
+    ["ls-tree", "-d", "HEAD", directory],
+    {
+      ignoreReturnCode: true,
+      silent: true
+    }
+  )
+
+  // If directory doesn't exist in HEAD, it's a new directory with changes
+  if (lsTreeExitCode !== 0) {
+    core.info(`Directory ${directory} is new (not in HEAD), treating as having changes`)
+    return true
+  }
 
   // Check for tracked changes (staged and unstaged)
   const diffExitCode = await exec.exec(
@@ -16,15 +30,7 @@ const hasChangesInDirectory = async (
     ["diff", "--quiet", "HEAD", "--", directory],
     {
       ignoreReturnCode: true,
-      silent: true,
-      listeners: {
-        stdout: () => {
-          hasChanges = true
-        },
-        stderr: () => {
-          hasChanges = true
-        }
-      }
+      silent: true
     }
   )
 
@@ -49,7 +55,7 @@ const hasChangesInDirectory = async (
     return true
   }
 
-  return hasChanges
+  return false
 }
 
 const run = async (): Promise<void> => {
