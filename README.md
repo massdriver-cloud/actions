@@ -207,6 +207,73 @@ jobs:
         uses: massdriver-cloud/actions/bundle_publish@v5
 ```
 
+#### Immutable Registry
+
+The Massdriver bundle registry is immutable per the `version:` field in your `massdriver.yaml` file. Once a version is published, it cannot be changed. The one exception is version `0.0.0`, which is treated as mutable for backwards compatibility.
+
+To optimize CI/CD performance, this action will automatically skip publishing if no changes are detected in the directory containing the `massdriver.yaml` file. This change detection is based on actual file modifications (not just the version field) because development builds auto-generate a `-dev.SUFFIX` on the version currently in the `massdriver.yaml` file.
+
+For more information about versioning and release strategies, see the [Versions documentation](https://docs.massdriver.cloud/concepts/versions).
+
+#### Development Builds
+
+For development workflows, you can publish bundles with auto-generated version suffixes using the `development` flag:
+
+```yaml
+- name: Publish Bundle (Development)
+  uses: massdriver-cloud/actions/bundle_publish@v5
+  with:
+    development: true
+```
+
+A common pattern is to publish development versions on pull requests, enabling you to test bundle changes with real infrastructure before merging to production:
+
+```yaml
+name: Test Bundle Changes
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      MASSDRIVER_API_KEY: ${{ secrets.MASSDRIVER_API_KEY }}
+      MASSDRIVER_ORG_ID: ${{ vars.MASSDRIVER_ORG_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Massdriver CLI
+        uses: massdriver-cloud/actions@v5
+      - name: Publish Development Bundle
+        uses: massdriver-cloud/actions/bundle_publish@v5
+        with:
+          build-directory: ./bundle
+          development: true
+```
+
+This workflow publishes a development version of your bundle whenever a pull request is opened or updated. These development versions can be deployed to test environments in Massdriver, allowing you to validate infrastructure changes with actual cloud resources as part of your continuous integration strategy.
+
+Learn more about [rapid infrastructure testing with development releases](https://docs.massdriver.cloud/concepts/versions#rapid-infrastructure-testing).
+
+#### Additional Options
+
+The bundle publish action supports additional configuration options:
+
+```yaml
+- name: Publish Bundle
+  uses: massdriver-cloud/actions/bundle_publish@v5
+  with:
+    # Path to directory containing massdriver.yaml (default: '.')
+    build-directory: ./bundle
+    # Skip linting before publish (default: false)
+    skip-lint: false
+    # Fail if lint produces warnings (default: false)
+    fail-warnings: true
+    # Publish as development version with auto-generated suffix (default: false)
+    development: false
+```
+
 ### Bundle Build
 
 Use this action to build schemas from massdriver.yaml:
