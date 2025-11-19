@@ -28,69 +28,12 @@ describe("bundle_publish", () => {
   })
 
   describe("hasChangesInDirectory", () => {
-    it("should return true when directory does not exist in HEAD", async () => {
-      // ls-tree returns non-zero (directory doesn't exist in HEAD)
+    it("should return true when directory has changes in HEAD commit", async () => {
       mockedExec.exec
-        .mockResolvedValueOnce(1) // ls-tree fails
-        .mockResolvedValueOnce(0) // mass bundle publish (won't be called in this test)
-
-      await bundlePublish()
-
-      // Verify ls-tree was called to check directory existence
-      expect(mockedExec.exec).toHaveBeenCalledWith(
-        "git",
-        ["ls-tree", "-d", "HEAD", "test-bundle"],
-        expect.objectContaining({
-          ignoreReturnCode: true,
-          silent: true
-        })
-      )
-
-      // Should have logged that it's a new directory
-      expect(mockedCore.info).toHaveBeenCalledWith(
-        "Directory test-bundle is new (not in HEAD), treating as having changes"
-      )
-
-      // Should attempt to publish
-      expect(mockedExec.exec).toHaveBeenCalledWith(
-        "mass bundle publish",
-        ["--build-directory", "test-bundle"]
-      )
-    })
-
-    it("should return true when directory has tracked changes", async () => {
-      mockedExec.exec
-        .mockResolvedValueOnce(0) // ls-tree succeeds (directory exists)
-        .mockResolvedValueOnce(1) // diff returns non-zero (has changes)
-        .mockResolvedValueOnce(0) // mass bundle publish
-
-      await bundlePublish()
-
-      // Verify diff was called
-      expect(mockedExec.exec).toHaveBeenCalledWith(
-        "git",
-        ["diff", "--quiet", "HEAD", "--", "test-bundle"],
-        expect.objectContaining({
-          ignoreReturnCode: true,
-          silent: true
-        })
-      )
-
-      // Should attempt to publish
-      expect(mockedExec.exec).toHaveBeenCalledWith(
-        "mass bundle publish",
-        ["--build-directory", "test-bundle"]
-      )
-    })
-
-    it("should return true when directory has untracked files", async () => {
-      mockedExec.exec
-        .mockResolvedValueOnce(0) // ls-tree succeeds
-        .mockResolvedValueOnce(0) // diff returns zero (no tracked changes)
         .mockImplementationOnce(async (cmd, args, options) => {
-          // ls-files returns untracked files
+          // diff-tree returns changed files
           if (options?.listeners?.stdout) {
-            options.listeners.stdout(Buffer.from("test-bundle/untracked.txt\n"))
+            options.listeners.stdout(Buffer.from("test-bundle/massdriver.yaml\ntest-bundle/src/main.tf\n"))
           }
           return 0
         })
@@ -98,16 +41,22 @@ describe("bundle_publish", () => {
 
       await bundlePublish()
 
-      // Verify ls-files was called to check untracked files
+      // Verify diff-tree was called to check HEAD commit
       expect(mockedExec.exec).toHaveBeenCalledWith(
         "git",
-        ["ls-files", "--others", "--exclude-standard", "test-bundle"],
+        ["diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD", "--", "test-bundle"],
         expect.objectContaining({
+          ignoreReturnCode: true,
           silent: true,
           listeners: expect.objectContaining({
             stdout: expect.any(Function)
           })
         })
+      )
+
+      // Should have logged changed files count
+      expect(mockedCore.info).toHaveBeenCalledWith(
+        "[hasChanges] ✓ Found 2 changed file(s) in test-bundle in HEAD commit"
       )
 
       // Should attempt to publish
@@ -117,12 +66,10 @@ describe("bundle_publish", () => {
       )
     })
 
-    it("should skip publish when no changes detected", async () => {
+    it("should skip publish when no changes detected in HEAD commit", async () => {
       mockedExec.exec
-        .mockResolvedValueOnce(0) // ls-tree succeeds
-        .mockResolvedValueOnce(0) // diff returns zero (no changes)
         .mockImplementationOnce(async (cmd, args, options) => {
-          // ls-files returns nothing (no untracked files)
+          // diff-tree returns no files (empty output)
           if (options?.listeners?.stdout) {
             options.listeners.stdout(Buffer.from(""))
           }
@@ -131,7 +78,10 @@ describe("bundle_publish", () => {
 
       await bundlePublish()
 
-      // Should have logged skip message
+      // Should have logged no changes
+      expect(mockedCore.info).toHaveBeenCalledWith(
+        "[hasChanges] ✗ No changes detected in test-bundle in HEAD commit"
+      )
       expect(mockedCore.info).toHaveBeenCalledWith(
         "No changes detected in test-bundle. Skipping publish due to immutable registry."
       )
@@ -155,7 +105,13 @@ describe("bundle_publish", () => {
       })
 
       mockedExec.exec
-        .mockResolvedValueOnce(1) // ls-tree fails (new directory)
+        .mockImplementationOnce(async (cmd, args, options) => {
+          // diff-tree returns changes
+          if (options?.listeners?.stdout) {
+            options.listeners.stdout(Buffer.from("my-bundle/massdriver.yaml\n"))
+          }
+          return 0
+        })
         .mockResolvedValueOnce(0) // mass bundle publish
 
       await bundlePublish()

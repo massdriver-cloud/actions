@@ -8,53 +8,35 @@ import * as exec from "@actions/exec"
 const hasChangesInDirectory = async (
   directory: string
 ): Promise<boolean> => {
-  // First, check if directory exists in the current HEAD
-  const lsTreeExitCode = await exec.exec(
+  core.info(`[hasChanges] Checking for changes in directory: ${directory}`)
+  
+  // Check what files changed in the current commit (HEAD)
+  // This works even with shallow clones (fetch-depth: 1)
+  core.info(`[hasChanges] Checking files changed in HEAD commit in ${directory}...`)
+  
+  let changedFiles = ""
+  const diffTreeExitCode = await exec.exec(
     "git",
-    ["ls-tree", "-d", "HEAD", directory],
+    ["diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD", "--", directory],
     {
       ignoreReturnCode: true,
-      silent: true
-    }
-  )
-
-  // If directory doesn't exist in HEAD, it's a new directory with changes
-  if (lsTreeExitCode !== 0) {
-    core.info(`Directory ${directory} is new (not in HEAD), treating as having changes`)
-    return true
-  }
-
-  // Check for tracked changes (staged and unstaged)
-  const diffExitCode = await exec.exec(
-    "git",
-    ["diff", "--quiet", "HEAD", "--", directory],
-    {
-      ignoreReturnCode: true,
-      silent: true
-    }
-  )
-
-  // If diff returned non-zero exit code, there are changes
-  if (diffExitCode !== 0) {
-    return true
-  }
-
-  // Check for untracked files in the directory
-  let untrackedOutput = ""
-  await exec.exec("git", ["ls-files", "--others", "--exclude-standard", directory], {
-    silent: true,
-    listeners: {
-      stdout: (data: Buffer) => {
-        untrackedOutput += data.toString()
+      silent: true,
+      listeners: {
+        stdout: (data: Buffer) => {
+          changedFiles += data.toString()
+        }
       }
     }
-  })
+  )
 
-  // If there's any output, there are untracked files
-  if (untrackedOutput.trim().length > 0) {
+  // diff-tree returns 0 even if no files changed, so check the output
+  if (changedFiles.trim().length > 0) {
+    const fileCount = changedFiles.trim().split('\n').length
+    core.info(`[hasChanges] ✓ Found ${fileCount} changed file(s) in ${directory} in HEAD commit`)
     return true
   }
 
+  core.info(`[hasChanges] ✗ No changes detected in ${directory} in HEAD commit`)
   return false
 }
 
