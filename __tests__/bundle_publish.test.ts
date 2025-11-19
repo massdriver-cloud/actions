@@ -31,7 +31,7 @@ describe("bundle_publish", () => {
     it("should return true when HEAD~1 does not exist", async () => {
       mockedExec.exec
         .mockResolvedValueOnce(1) // first rev-parse HEAD~1 fails
-        .mockResolvedValueOnce(0) // git fetch --depth=2
+        .mockResolvedValueOnce(0) // git fetch --deepen=1
         .mockResolvedValueOnce(1) // second rev-parse HEAD~1 still fails (first commit)
         .mockResolvedValueOnce(0) // mass bundle publish
 
@@ -40,7 +40,7 @@ describe("bundle_publish", () => {
       // Verify fetch was attempted
       expect(mockedExec.exec).toHaveBeenCalledWith(
         "git",
-        ["fetch", "--depth=2"],
+        ["fetch", "--deepen=1"],
         expect.objectContaining({
           ignoreReturnCode: true
         })
@@ -61,7 +61,7 @@ describe("bundle_publish", () => {
     it("should fetch parent and detect changes when HEAD~1 missing initially", async () => {
       mockedExec.exec
         .mockResolvedValueOnce(1) // first rev-parse HEAD~1 fails (shallow clone)
-        .mockResolvedValueOnce(0) // git fetch --depth=2
+        .mockResolvedValueOnce(0) // git fetch --deepen=1
         .mockResolvedValueOnce(0) // second rev-parse HEAD~1 succeeds
         .mockImplementationOnce(async (cmd, args, options) => {
           // git diff returns changed files
@@ -77,7 +77,7 @@ describe("bundle_publish", () => {
       // Verify fetch was attempted
       expect(mockedExec.exec).toHaveBeenCalledWith(
         "git",
-        ["fetch", "--depth=2"],
+        ["fetch", "--deepen=1"],
         expect.objectContaining({
           ignoreReturnCode: true
         })

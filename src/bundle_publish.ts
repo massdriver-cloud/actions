@@ -24,10 +24,10 @@ const hasChangesInDirectory = async (
 
   if (parentExitCode !== 0) {
     core.info(`[hasChanges] HEAD~1 not found, fetching parent commit...`)
-    // Try to fetch the parent commit (handles shallow clones)
+    // Try to deepen the history by 1 commit (handles shallow clones)
     await exec.exec(
       "git",
-      ["fetch", "--depth=2"],
+      ["fetch", "--deepen=1"],
       {
         ignoreReturnCode: true
       }
