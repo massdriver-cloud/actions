@@ -25708,8 +25708,8 @@ const hasChangesInDirectory = (directory) => __awaiter(void 0, void 0, void 0, f
     });
     if (parentExitCode !== 0) {
         core.info(`[hasChanges] HEAD~1 not found, fetching parent commit...`);
-        // Try to fetch the parent commit (handles shallow clones)
-        yield exec.exec("git", ["fetch", "--depth=2"], {
+        // Try to deepen the history by 1 commit (handles shallow clones)
+        yield exec.exec("git", ["fetch", "--deepen=1"], {
             ignoreReturnCode: true
         });
         // Check again if we now have HEAD~1
