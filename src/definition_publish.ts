@@ -6,7 +6,7 @@ const run = async (): Promise<void> => {
 
   try {
     const command = `mass definition publish`
-    const args = [`--file`, file]
+    const args = [file]
     await exec.exec(command, args)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
