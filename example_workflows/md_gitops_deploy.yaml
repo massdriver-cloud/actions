@@ -1,0 +1,33 @@
+name: GitOps Instance Deploy
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'instances/prod.yaml'
+
+# GitOps-style deploy: an instance's parameters live in a file in the repo
+# (e.g. instances/prod.yaml), and any commit to main that modifies that
+# file triggers a redeploy with the new configuration.
+#
+# To manage multiple instances, duplicate the job (or use a matrix) with
+# a different params file per environment/component.
+
+env:
+  MASSDRIVER_API_KEY: ${{secrets.MASSDRIVER_API_KEY}}
+  MASSDRIVER_ORG_ID: ${{secrets.MASSDRIVER_ORG_ID}}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Massdriver CLI
+        uses: massdriver-cloud/actions/setup@v6
+      - name: Deploy Instance
+        uses: massdriver-cloud/actions/instance_deploy@v6
+        with:
+          project: my-project
+          environment: prod
+          component: my-app
+          params: ./instances/prod.yaml
+          message: ${{github.event.head_commit.message}}

@@ -1,11 +1,11 @@
 {
   "name": "massdriver-setup",
-  "version": "4.3",
+  "version": "6.0.0",
   "private": true,
   "description": "A Github Action for setting up the Massdriver CLI",
   "main": "dist/setup/index.js",
   "scripts": {
-    "build": "tsc && ncc build -o dist/setup src/setup.ts && ncc build -o dist/bundle_publish src/bundle_publish.ts && ncc build -o dist/bundle_build src/bundle_build.ts && ncc build -o dist/image_push src/image_push.ts && ncc build -o dist/app_patch src/app_patch.ts && ncc build -o dist/app_deploy src/app_deploy.ts && ncc build -o dist/preview_deploy src/preview_deploy.ts && ncc build -o dist/preview_decommission src/preview_decommission.ts && ncc build -o dist/definition_publish src/definition_publish.ts",
+    "build": "tsc && ncc build -o dist/setup src/setup.ts && ncc build -o dist/bundle_publish src/bundle_publish.ts && ncc build -o dist/bundle_build src/bundle_build.ts && ncc build -o dist/instance_deploy src/instance_deploy.ts",
     "format": "prettier --write '**/*.ts'",
     "format-check": "prettier --check '**/*.ts'",
     "lint": "eslint src/**/*.ts",
@@ -27,7 +27,6 @@
     "@actions/exec": "^1.1.0",
     "@actions/github": "^6.0.0",
     "@actions/tool-cache": "^2.0.1",
-    "@docker/actions-toolkit": "0.23.0",
     "async-retry": "^1.3.3",
     "node-fetch": "^3.3.1"
   },
@@ -36,6 +35,7 @@
     "@types/async-retry": "^1.4.5",
     "@types/jest": "^29.5.0",
     "@types/node": "^20.12.12",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@vercel/ncc": "^0.38.0",
     "eslint": "^8.57.0",

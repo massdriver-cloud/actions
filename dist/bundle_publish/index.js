@@ -25748,20 +25748,20 @@ const hasChangesInDirectory = (directory) => __awaiter(void 0, void 0, void 0, f
     return false;
 });
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
-    const buildDirectory = core.getInput("build-directory", { required: false });
+    const bundleDirectory = core.getInput("bundle-directory", { required: false });
     const failWarnings = core.getInput("fail-warnings") === "true";
     const skipLint = core.getInput("skip-lint") === "true";
     const development = core.getInput("development") === "true";
     try {
-        // Check if there are changes in the build directory
+        // Check if there are changes in the bundle directory
         // If not, skip publishing (NOOP for immutable registry)
-        const hasChanges = yield hasChangesInDirectory(buildDirectory);
+        const hasChanges = yield hasChangesInDirectory(bundleDirectory);
         if (!hasChanges) {
-            core.info(`No changes detected in ${buildDirectory}. Skipping publish due to immutable registry.`);
+            core.info(`No changes detected in ${bundleDirectory}. Skipping publish due to immutable registry.`);
             return;
         }
         const command = `mass bundle publish`;
-        const args = [`--build-directory`, buildDirectory];
+        const args = [`--bundle-directory`, bundleDirectory];
         if (failWarnings) {
             args.push(`--fail-warnings`);
         }

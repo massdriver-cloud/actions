@@ -14,14 +14,14 @@ import bundlePublish from "../src/bundle_publish"
 describe("bundle_publish", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    
+
     // Mock core.getInput to return defaults
     mockedCore.getInput.mockImplementation((name: string) => {
       const defaults: Record<string, string> = {
-        "build-directory": "test-bundle",
+        "bundle-directory": "test-bundle",
         "fail-warnings": "false",
         "skip-lint": "false",
-        "development": "false"
+        development: "false"
       }
       return defaults[name] || ""
     })
@@ -52,10 +52,10 @@ describe("bundle_publish", () => {
       )
 
       // Should attempt to publish
-      expect(mockedExec.exec).toHaveBeenCalledWith(
-        "mass bundle publish",
-        ["--build-directory", "test-bundle"]
-      )
+      expect(mockedExec.exec).toHaveBeenCalledWith("mass bundle publish", [
+        "--bundle-directory",
+        "test-bundle"
+      ])
     })
 
     it("should fetch parent and detect changes when HEAD~1 missing initially", async () => {
@@ -66,7 +66,9 @@ describe("bundle_publish", () => {
         .mockImplementationOnce(async (cmd, args, options) => {
           // git diff returns changed files
           if (options?.listeners?.stdout) {
-            options.listeners.stdout(Buffer.from("test-bundle/massdriver.yaml\n"))
+            options.listeners.stdout(
+              Buffer.from("test-bundle/massdriver.yaml\n")
+            )
           }
           return 0
         })
@@ -95,7 +97,11 @@ describe("bundle_publish", () => {
         .mockImplementationOnce(async (cmd, args, options) => {
           // git diff returns changed files
           if (options?.listeners?.stdout) {
-            options.listeners.stdout(Buffer.from("test-bundle/massdriver.yaml\ntest-bundle/src/main.tf\n"))
+            options.listeners.stdout(
+              Buffer.from(
+                "test-bundle/massdriver.yaml\ntest-bundle/src/main.tf\n"
+              )
+            )
           }
           return 0
         })
@@ -121,10 +127,10 @@ describe("bundle_publish", () => {
       )
 
       // Should attempt to publish
-      expect(mockedExec.exec).toHaveBeenCalledWith(
-        "mass bundle publish",
-        ["--build-directory", "test-bundle"]
-      )
+      expect(mockedExec.exec).toHaveBeenCalledWith("mass bundle publish", [
+        "--bundle-directory",
+        "test-bundle"
+      ])
     })
 
     it("should skip publish when no changes detected between HEAD~1 and HEAD", async () => {
@@ -158,10 +164,10 @@ describe("bundle_publish", () => {
     it("should pass correct flags to bundle publish command", async () => {
       mockedCore.getInput.mockImplementation((name: string) => {
         const inputs: Record<string, string> = {
-          "build-directory": "my-bundle",
+          "bundle-directory": "my-bundle",
           "fail-warnings": "true",
           "skip-lint": "true",
-          "development": "true"
+          development: "true"
         }
         return inputs[name] || ""
       })
@@ -173,21 +179,18 @@ describe("bundle_publish", () => {
       await bundlePublish()
 
       // Should call with all flags
-      expect(mockedExec.exec).toHaveBeenCalledWith(
-        "mass bundle publish",
-        [
-          "--build-directory",
-          "my-bundle",
-          "--fail-warnings",
-          "--skip-lint",
-          "--development"
-        ]
-      )
+      expect(mockedExec.exec).toHaveBeenCalledWith("mass bundle publish", [
+        "--bundle-directory",
+        "my-bundle",
+        "--fail-warnings",
+        "--skip-lint",
+        "--development"
+      ])
     })
 
     it("should handle errors and set failed status", async () => {
       const error = new Error("Git command failed")
-      
+
       mockedExec.exec.mockRejectedValueOnce(error)
 
       await bundlePublish()
@@ -196,4 +199,3 @@ describe("bundle_publish", () => {
     })
   })
 })
-

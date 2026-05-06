@@ -1,0 +1,48 @@
+name: Build, Push, and Deploy
+on:
+  push:
+    branches: [main]
+
+# Build and push a container image, then patch the deployed instance
+# to use the new image tag.
+#
+# This example pushes to Docker Hub. To use a different registry (ECR,
+# GAR, ACR, GHCR, etc.) swap the docker/login-action step for that
+# registry's auth flow. The docker/build-push-action step stays the same.
+
+env:
+  MASSDRIVER_API_KEY: ${{secrets.MASSDRIVER_API_KEY}}
+  MASSDRIVER_ORG_ID: ${{secrets.MASSDRIVER_ORG_ID}}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_TOKEN}}
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: my-org/my-app:${{github.sha}}
+
+      - name: Install Massdriver CLI
+        uses: massdriver-cloud/actions/setup@v6
+      - name: Publish Bundle
+        uses: massdriver-cloud/actions/bundle_publish@v6
+        with:
+          bundle-directory: ./bundle
+      - name: Deploy Instance
+        uses: massdriver-cloud/actions/instance_deploy@v6
+        with:
+          project: my-project
+          environment: prod
+          component: my-app
+          patch: |
+            .image.tag = "${{github.sha}}"
