@@ -25735,10 +25735,10 @@ const hasChangesInDirectory = (directory) => __awaiter(void 0, void 0, void 0, f
             }
         }
     });
-    core.info(`[hasChanges] Changed files output: ${changedFiles.trim() || '(none)'}`);
+    core.info(`[hasChanges] Changed files output: ${changedFiles.trim() || "(none)"}`);
     // Check if any files were returned
     if (changedFiles.trim().length > 0) {
-        const fileCount = changedFiles.trim().split('\n').length;
+        const fileCount = changedFiles.trim().split("\n").length;
         core.info(`[hasChanges] ✓ Found ${fileCount} changed file(s) in ${directory}`);
         core.info(`====== [hasChanges] END ======`);
         return true;
