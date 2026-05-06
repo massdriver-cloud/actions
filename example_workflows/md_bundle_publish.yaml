@@ -3,24 +3,23 @@ on:
   push:
     branches: [main]
 
-# Fill in empty values before use and set secrets in GitHub
+# Publish a bundle to Massdriver on every push to main. The publish
+# action is a no-op when the contents of bundle-directory haven't
+# changed since the previous commit, so it's safe to run on every push.
+
 env:
-  # Massdriver Secrets
   MASSDRIVER_API_KEY: ${{secrets.MASSDRIVER_API_KEY}}
   MASSDRIVER_ORG_ID: ${{secrets.MASSDRIVER_ORG_ID}}
-  # Local paths
-  BUNDLE_FOLDER: ./bundle
 
 jobs:
   publish:
     name: Publish Bundle to Massdriver
     runs-on: ubuntu-latest
-    needs: ci
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Massdriver CLI
-        uses: massdriver-cloud/actions/setup@v5
+        uses: massdriver-cloud/actions/setup@v6
       - name: Publish Bundle
-        uses: massdriver-cloud/actions/bundle_publish@v5
+        uses: massdriver-cloud/actions/bundle_publish@v6
         with:
-          build-directory: ${{env.BUNDLE_FOLDER}}
+          bundle-directory: ./bundle

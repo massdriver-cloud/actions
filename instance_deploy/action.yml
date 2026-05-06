@@ -1,0 +1,35 @@
+name: 'Instance Deploy'
+description: |
+  Deploy an instance on Massdriver.
+  The bundle backing the instance must already be published to Massdriver and the component must already exist on the project's blueprint.
+author: 'Massdriver, Inc.'
+inputs:
+  project:
+    description: |
+      The slug of the project the instance belongs to.
+    required: true
+  environment:
+    description: |
+      The slug of the environment the instance is deployed to.
+    required: true
+  component:
+    description: |
+      The slug of the component to deploy.
+    required: true
+  params:
+    description: |
+      Path to a params file (json, yaml, tfvars, or toml) that fully replaces the instance configuration on this deploy.
+      Mutually exclusive with `patch`.
+    required: false
+  patch:
+    description: |
+      One or more JQ expressions (one per line) applied to the last deployed configuration.
+      Mutually exclusive with `params`.
+    required: false
+  message:
+    description: |
+      Message associated with this deploy in Massdriver.
+    required: false
+runs:
+  using: node20
+  main: '../dist/instance_deploy/index.js'

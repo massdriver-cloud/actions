@@ -1,0 +1,36 @@
+name: Massdriver Deploy
+on:
+  push:
+    branches: [main]
+
+# Minimal publish + deploy: on every push to main, publish the bundle
+# and deploy the instance, patching the image tag to the commit SHA.
+# Assumes the image has already been built and pushed elsewhere (or
+# that the bundle does not reference a container image).
+
+env:
+  MASSDRIVER_API_KEY: ${{secrets.MASSDRIVER_API_KEY}}
+  MASSDRIVER_ORG_ID: ${{secrets.MASSDRIVER_ORG_ID}}
+  # Required for self-hosted Massdriver instances. Omit when using the SaaS platform.
+  # MASSDRIVER_URL: https://api.your.massdriver.domain
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Massdriver CLI
+        uses: massdriver-cloud/actions/setup@v6
+      - name: Publish Bundle
+        uses: massdriver-cloud/actions/bundle_publish@v6
+        with:
+          bundle-directory: ./bundle
+      - name: Deploy Instance
+        uses: massdriver-cloud/actions/instance_deploy@v6
+        with:
+          project: my-project
+          environment: prod
+          component: my-app
+          patch: |
+            .image.tag = "${{github.sha}}"

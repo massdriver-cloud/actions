@@ -25694,10 +25694,10 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(7484));
 const exec = __importStar(__nccwpck_require__(5236));
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
-    const buildDirectory = core.getInput("build-directory", { required: false });
+    const bundleDirectory = core.getInput("bundle-directory", { required: false });
     try {
         const command = `mass bundle build`;
-        const args = [`--build-directory`, buildDirectory];
+        const args = [`--bundle-directory`, bundleDirectory];
         yield exec.exec(command, args);
     }
     catch (error) {
