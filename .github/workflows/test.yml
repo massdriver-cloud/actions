@@ -11,8 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Set Node.js 24.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
       - run: npm install
       - run: npm run build
+      - run: npm test
   test: # make sure the action works on a clean machine without building
     strategy:
       matrix:
@@ -21,10 +26,10 @@ jobs:
     runs-on: ${{ matrix.runner}}
     steps:
       - uses: actions/checkout@v4
-      - name: Set Node.js 20.x
-        uses: actions/setup-node@v4.0.2
+      - name: Set Node.js 24.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 24.x
       - uses: ./
         with:
           tag: ${{ matrix.version }}

@@ -6,6 +6,10 @@ Build, publish, and deploy your bundles and instances with simple GH Workflows.
 
 > **Upgrading from v5?** See the [migration guide](MIGRATION.md). v6 removes `app_deploy`, `app_patch`, `image_push`, `preview_deploy`, `preview_decommission`, and `definition_publish`, and introduces `instance_deploy` along with various configuration changes.
 
+## Requirements
+
+The actions run on the Node 24 runtime (`runs.using: node24`). GitHub-hosted runners support this out of the box. Self-hosted runners (including GitHub Enterprise Server) must be running [actions/runner](https://github.com/actions/runner) **v2.327.0 or later**.
+
 ## Usage Example
 
 Below is an annotated example of how to use GitHub actions to publish and deploy a bundle on Massdriver.
