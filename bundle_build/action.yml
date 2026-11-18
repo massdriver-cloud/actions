@@ -8,5 +8,5 @@ inputs:
     required: false
     default: '.'
 runs:
-  using: node20
+  using: node24
   main: '../dist/bundle_build/index.js'
