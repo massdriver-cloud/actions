@@ -36,6 +36,10 @@ If you've pinned the Massdriver CLI release via `setup`'s `tag:` input, it must 
 
 `tag: latest` (the default) requires no change.
 
+## Runner requirement: Node 24
+
+v6 actions run on the Node 24 runtime. GitHub-hosted runners need no changes. Self-hosted runners (including GitHub Enterprise Server) must be on [actions/runner](https://github.com/actions/runner) **v2.327.0 or later**; older runners fail with `Parameter using: node24 is not supported`.
+
 ## `bundle_build` / `bundle_publish`: `build-directory` → `bundle-directory`
 
 The input was renamed for consistency with the underlying CLI flag.

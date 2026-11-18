@@ -34,7 +34,7 @@
     "@jest/test-sequencer": "^29.7.0",
     "@types/async-retry": "^1.4.5",
     "@types/jest": "^29.5.0",
-    "@types/node": "^20.12.12",
+    "@types/node": "^24.0.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@vercel/ncc": "^0.38.0",
